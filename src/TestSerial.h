@@ -1,5 +1,12 @@
 #ifndef TEST_SERIAL_H
 #define TEST_SERIAL_H
+#define SIMULATION
+#ifdef SIMULATION
+#define GETTIME time(NULL)
+#else
+#define GETTIME call LocalTime.get()
+#endif
+
 
 enum {
   AM_COMMANDMSG 			= 6,
@@ -13,8 +20,9 @@ enum {
   AM_SENDRADIOQ_LEN			= 2,
   AM_ACKTIMEOUT				= 2000,
   AM_MAXNODEID				= 65535,
-  NREADINGS 				= 10, // count of samples
-  DEFAULT_SAMPLING_INTERVAL = 256 // Default sampling period.
+  NREADINGS 				= 5, // count of samples
+  DEFAULT_SAMPLING_INTERVAL = 1000, // Default sampling period.
+  SERIAL_ADDR				= 99 // serial address
 };
 
 typedef nx_struct CommandMsg {
@@ -41,9 +49,9 @@ typedef nx_struct SensorMsg {
   nx_uint16_t version; /* Version of the interval. */
   nx_uint8_t sensor; /* From which sensor? 0 means not active*/
   nx_uint16_t interval; /* Samping period. */
-  nx_uint16_t id; /* Mote id of sending mote. */
+  nx_uint16_t sender; /* Mote id of sending mote. */
   nx_uint16_t count; /* The readings are samples count * NREADINGS onwards */
-  nx_uint16_t readings[NREADINGS];
+  nx_uint16_t readings[NREADINGS]; /* "null or error" = 0xffff */
 } SensorMsg;
 
 typedef nx_struct TableMsg {
@@ -56,3 +64,4 @@ typedef nx_struct TableMsg {
 
 
 #endif
+

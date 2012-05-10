@@ -7,12 +7,12 @@
 public class SensorMsg extends net.tinyos.message.Message {
 
     /** The default size of this message type in bytes. */
-    public static final int DEFAULT_MESSAGE_SIZE = 29;
+    public static final int DEFAULT_MESSAGE_SIZE = 19;
 
     /** The Active Message type associated with this message. */
     public static final int AM_TYPE = 4;
 
-    /** Create a new SensorMsg of size 29. */
+    /** Create a new SensorMsg of size 19. */
     public SensorMsg() {
         super(DEFAULT_MESSAGE_SIZE);
         amTypeSet(AM_TYPE);
@@ -94,14 +94,14 @@ public class SensorMsg extends net.tinyos.message.Message {
         s += "  [interval=0x"+Long.toHexString(get_interval())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
-        s += "  [id=0x"+Long.toHexString(get_id())+"]\n";
+        s += "  [sender=0x"+Long.toHexString(get_sender())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
         s += "  [count=0x"+Long.toHexString(get_count())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
         s += "  [readings=";
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
           s += "0x"+Long.toHexString(getElement_readings(i) & 0xffff)+" ";
         }
         s += "]\n";
@@ -301,65 +301,65 @@ public class SensorMsg extends net.tinyos.message.Message {
     }
 
     /////////////////////////////////////////////////////////
-    // Accessor methods for field: id
+    // Accessor methods for field: sender
     //   Field type: int, unsigned
     //   Offset (bits): 40
     //   Size (bits): 16
     /////////////////////////////////////////////////////////
 
     /**
-     * Return whether the field 'id' is signed (false).
+     * Return whether the field 'sender' is signed (false).
      */
-    public static boolean isSigned_id() {
+    public static boolean isSigned_sender() {
         return false;
     }
 
     /**
-     * Return whether the field 'id' is an array (false).
+     * Return whether the field 'sender' is an array (false).
      */
-    public static boolean isArray_id() {
+    public static boolean isArray_sender() {
         return false;
     }
 
     /**
-     * Return the offset (in bytes) of the field 'id'
+     * Return the offset (in bytes) of the field 'sender'
      */
-    public static int offset_id() {
+    public static int offset_sender() {
         return (40 / 8);
     }
 
     /**
-     * Return the offset (in bits) of the field 'id'
+     * Return the offset (in bits) of the field 'sender'
      */
-    public static int offsetBits_id() {
+    public static int offsetBits_sender() {
         return 40;
     }
 
     /**
-     * Return the value (as a int) of the field 'id'
+     * Return the value (as a int) of the field 'sender'
      */
-    public int get_id() {
-        return (int)getUIntBEElement(offsetBits_id(), 16);
+    public int get_sender() {
+        return (int)getUIntBEElement(offsetBits_sender(), 16);
     }
 
     /**
-     * Set the value of the field 'id'
+     * Set the value of the field 'sender'
      */
-    public void set_id(int value) {
-        setUIntBEElement(offsetBits_id(), 16, value);
+    public void set_sender(int value) {
+        setUIntBEElement(offsetBits_sender(), 16, value);
     }
 
     /**
-     * Return the size, in bytes, of the field 'id'
+     * Return the size, in bytes, of the field 'sender'
      */
-    public static int size_id() {
+    public static int size_sender() {
         return (16 / 8);
     }
 
     /**
-     * Return the size, in bits, of the field 'id'
+     * Return the size, in bits, of the field 'sender'
      */
-    public static int sizeBits_id() {
+    public static int sizeBits_sender() {
         return 16;
     }
 
@@ -452,7 +452,7 @@ public class SensorMsg extends net.tinyos.message.Message {
      */
     public static int offset_readings(int index1) {
         int offset = 72;
-        if (index1 < 0 || index1 >= 10) throw new ArrayIndexOutOfBoundsException();
+        if (index1 < 0 || index1 >= 5) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 16;
         return (offset / 8);
     }
@@ -462,7 +462,7 @@ public class SensorMsg extends net.tinyos.message.Message {
      */
     public static int offsetBits_readings(int index1) {
         int offset = 72;
-        if (index1 < 0 || index1 >= 10) throw new ArrayIndexOutOfBoundsException();
+        if (index1 < 0 || index1 >= 5) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 16;
         return offset;
     }
@@ -471,7 +471,7 @@ public class SensorMsg extends net.tinyos.message.Message {
      * Return the entire array 'readings' as a int[]
      */
     public int[] get_readings() {
-        int[] tmp = new int[10];
+        int[] tmp = new int[5];
         for (int index0 = 0; index0 < numElements_readings(0); index0++) {
             tmp[index0] = getElement_readings(index0);
         }
@@ -505,14 +505,14 @@ public class SensorMsg extends net.tinyos.message.Message {
      * Return the total size, in bytes, of the array 'readings'
      */
     public static int totalSize_readings() {
-        return (160 / 8);
+        return (80 / 8);
     }
 
     /**
      * Return the total size, in bits, of the array 'readings'
      */
     public static int totalSizeBits_readings() {
-        return 160;
+        return 80;
     }
 
     /**
@@ -540,7 +540,7 @@ public class SensorMsg extends net.tinyos.message.Message {
      * Return the number of elements in the array 'readings'
      */
     public static int numElements_readings() {
-        return 10;
+        return 5;
     }
 
     /**
@@ -548,7 +548,7 @@ public class SensorMsg extends net.tinyos.message.Message {
      * for the given dimension.
      */
     public static int numElements_readings(int dimension) {
-      int array_dims[] = { 10,  };
+      int array_dims[] = { 5,  };
         if (dimension < 0 || dimension >= 1) throw new ArrayIndexOutOfBoundsException();
         if (array_dims[dimension] == 0) throw new IllegalArgumentException("Array dimension "+dimension+" has unknown size");
         return array_dims[dimension];

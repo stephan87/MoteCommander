@@ -48,10 +48,20 @@ public class Connection implements MessageListener  {
 		{
 			TableMsg msg = (TableMsg)message;
 			
-			System.out.println("Table of Node: "+msg.get_sender());
+			/*System.out.println("Table of Node: "+msg.get_sender());
 			for (int i=0;i< 4;i++) //AM_TABLESIZE
 			{
 				System.out.println("Neighbor: "+msg.getElement_nodeId(i)+" LastContact: "+msg.getElement_lastContact(i));
+			}*/
+		}
+		else if(messageType == 4) //AM_TABLEMSG
+		{
+			SensorMsg msg = (SensorMsg)message;
+			
+			System.out.println("SensorData from Node: "+msg.get_sender());
+			for (int i=0;i< msg.get_count();i++) //AM_TABLESIZE
+			{
+				System.out.println("SensorData sensor"+msg.get_sensor()+": "+msg.getElement_readings(i));
 			}
 		}
 	}
@@ -79,6 +89,7 @@ public class Connection implements MessageListener  {
 		this.moteIF = mif;
 		this.moteIF.registerListener(new SerialMsg(), this);
 		this.moteIF.registerListener(new TableMsg(),this);
+		this.moteIF.registerListener(new SensorMsg(),this);
 
 		return mif;
 	}
