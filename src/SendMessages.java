@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import net.tinyos.message.MoteIF;
 /**
  * Thread which sends messages to a serialForwarder.
@@ -12,37 +9,48 @@ public class SendMessages implements Runnable {
 	private MoteIF moteIF;
 	private int ledNumber;
 	private int seqnumber;
-	private ArrayList<Integer> receivers;
+	private int[] receivers;
+	private short[] sensors;
 
 	@SuppressWarnings("unused")
 	private SendMessages() {
 
 	}
 
-	public SendMessages(MoteIF moteIF, int seqnumber, int ledNumber, ArrayList<Integer> receivers) {
+	public SendMessages(MoteIF moteIF, int seqnumber, int ledNumber, int[] receivers, short[] sensors) {
 		this.moteIF = moteIF;
 		this.seqnumber = seqnumber;
 		this.ledNumber = ledNumber;
 		this.receivers = receivers;
+		this.sensors = sensors;
 	}
 
 	@SuppressWarnings("deprecation")
 	public void sendPackets() {
 
-		for(Iterator<Integer> iter = receivers.iterator(); iter.hasNext(); ){
+		for(int receiver = 0; receiver < receivers.length; receiver++){
 			
 			SerialMsg payload = new SerialMsg();
-			int receiver = iter.next().intValue();
+			
 			try {
 				payload.set_receiver(receiver);
 				payload.set_sender(99);
 				payload.set_seqNum(seqnumber++);
 				payload.set_ledNum(ledNumber);
-				MCWindow.textAreaOutput.setText("Forward message to mote \"0\" with receiver "+ receiver +"!\n"+ MCWindow.textAreaOutput.getText());
+				payload.set_sensor(sensors);
+				MCWindow.textAreaOutput.setText("Forward message to mote \"0\" with receiver "
+				+ receiver +"!\n"+ MCWindow.textAreaOutput.getText());
 				moteIF.send(0, payload);
 				
+				// update global sequencenumber
+				MCWindow.setSeqNumber(seqnumber);
+				
+				// save last sent message to compare with ack
 				Connection.payload = payload;
+				//TODO check ack?
 				System.out.println("supsend");
+				
+				// sleep until ack received
 				MCWindow.sendMessage.suspend();
 				
 			} catch (Exception exception) {
