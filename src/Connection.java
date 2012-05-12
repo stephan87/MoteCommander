@@ -27,7 +27,7 @@ public class Connection implements MessageListener  {
 	 * @see net.tinyos.message.MessageListener#messageReceived(int, net.tinyos.message.Message)
 	 */
 	@SuppressWarnings("deprecation")
-	public void messageReceived(int to, Message message) {
+	public synchronized void messageReceived(int to, Message message) {
 		System.out.println("Message received - type: "+message.amType());
 		
 		// get local time
@@ -74,7 +74,7 @@ public class Connection implements MessageListener  {
 				moteTables.add(tableMsg.get_sender(), moteTable);
 			}
 							
-			//System.out.println("Table of Node: "+tableMsg.get_sender());
+			System.out.println("Table of Node: "+tableMsg.get_sender());
 			
 		}
 		else if(messageType == 4 && (message.dataLength() == SensorMsg.DEFAULT_MESSAGE_SIZE)) //AM_TABLEMSG
@@ -85,15 +85,16 @@ public class Connection implements MessageListener  {
 					sensorMsg.get_readings(), dateFormat.format(date));
 			
 			ArrayList<SensorData> sensorDataArray = SensorDataManager.getInstance().getSensorData();
-			try{
-				// override
-				sensorDataArray.set(sensorMsg.get_sender(), sensorData);
-			}catch(Throwable th){
-				// add
-				sensorDataArray.add(sensorMsg.get_sender(), sensorData);
+			
+			// check max size
+			if(sensorDataArray.size()<300){
+				sensorDataArray.add(sensorData);
+			}else{
+				sensorDataArray.clear();
 			}
 			
-			//System.out.println("SensorData from Node: "+sensorMsg.get_sender());
+			
+			System.out.println("SensorData from Node: "+sensorMsg.get_sender());
 		}	
 	}
 
