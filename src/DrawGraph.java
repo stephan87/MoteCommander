@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.*;
 
@@ -16,7 +17,7 @@ import javax.swing.*;
  */
 @SuppressWarnings("serial")
 public class DrawGraph extends JPanel {
-	private static int MAX_VALUE;
+	private static int MAX_VALUE = 0;
 	private static final int PANEL_WITDH = 500;
 	private static final int PANEL_HIGTH = 500;
 	private static final int BORDER_DISTANCE = 30;
@@ -31,7 +32,14 @@ public class DrawGraph extends JPanel {
 
 	public DrawGraph(List<Integer> dataPoints) {
 		this.dataPoints = dataPoints;
-		MAX_VALUE = dataPoints.size();
+		//search max
+		int current=0;
+		for(Iterator<Integer> iter = dataPoints.iterator();iter.hasNext();){
+			current = iter.next();
+			if(current> MAX_VALUE){
+				MAX_VALUE = current;
+			}
+		}
 	}
 
 	@Override
@@ -134,7 +142,7 @@ public class DrawGraph extends JPanel {
 		graphPoints = new ArrayList<Point>();
 		for (int i = 0; i < dataPoints.size(); i++) {
 			int x1 = (int) ((i + 1) * xScale + BORDER_DISTANCE);
-			int y1 = (int) (dataPoints.get(i) * yScale + BORDER_DISTANCE);
+			int y1 = (int) (getHeight() - (dataPoints.get(i) * yScale + BORDER_DISTANCE ) );
 			graphPoints.add(new Point(x1, y1));
 		}
 	}

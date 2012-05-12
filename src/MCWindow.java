@@ -40,6 +40,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JTextPane;
+import javax.swing.event.PopupMenuListener;
+import javax.swing.event.PopupMenuEvent;
 
 /**
  * Builds window for the MoteCommander application.
@@ -364,7 +366,7 @@ public class MCWindow {
 				Double.MIN_VALUE };
 		panelSensorCheckBoxes.setLayout(gbl_panelSensorCheckBoxes);
 
-		final JCheckBox checkBoxHumidity = new JCheckBox("Humidity-Sensor ON");
+		checkBoxHumidity = new JCheckBox("Humidity-Sensor ON");
 		checkBoxHumidity.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_checkBoxHumidity = new GridBagConstraints();
 		gbc_checkBoxHumidity.fill = GridBagConstraints.HORIZONTAL;
@@ -373,8 +375,7 @@ public class MCWindow {
 		gbc_checkBoxHumidity.gridy = 0;
 		panelSensorCheckBoxes.add(checkBoxHumidity, gbc_checkBoxHumidity);
 
-		final JCheckBox checkBoxTemperature = new JCheckBox(
-				"Temperature-Sensor ON");
+		checkBoxTemperature = new JCheckBox("Temperature-Sensor ON");
 		checkBoxTemperature.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_checkBoxTemperature = new GridBagConstraints();
 		gbc_checkBoxTemperature.fill = GridBagConstraints.HORIZONTAL;
@@ -383,7 +384,7 @@ public class MCWindow {
 		gbc_checkBoxTemperature.gridy = 1;
 		panelSensorCheckBoxes.add(checkBoxTemperature, gbc_checkBoxTemperature);
 
-		final JCheckBox checkBoxLight = new JCheckBox("Light-Sensor ON");
+		checkBoxLight = new JCheckBox("Light-Sensor ON");
 		checkBoxLight.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_checkBoxLight = new GridBagConstraints();
 		gbc_checkBoxLight.fill = GridBagConstraints.HORIZONTAL;
@@ -448,6 +449,14 @@ public class MCWindow {
 		panelComboBoxes.setLayout(gbl_panelComboBoxes);
 
 		comboBoxSensorMote = new JComboBox();
+		comboBoxSensorMote.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				drawGraph();
+
+			}
+		});
 		comboBoxSensorMote.setMinimumSize(new Dimension(0, 0));
 		GridBagConstraints gbc_comboBoxSensorMote = new GridBagConstraints();
 		gbc_comboBoxSensorMote.fill = GridBagConstraints.HORIZONTAL;
@@ -458,7 +467,15 @@ public class MCWindow {
 		panelComboBoxes.add(comboBoxSensorMote, gbc_comboBoxSensorMote);
 
 		comboBoxSensor = new JComboBox();
-		DefaultComboBoxModel modelComboBoxSensor = new DefaultComboBoxModel<String>();
+		comboBoxSensor.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				drawGraph();
+
+			}
+		});
+		DefaultComboBoxModel modelComboBoxSensor = new DefaultComboBoxModel();
 		modelComboBoxSensor.addElement("Humidity");
 		modelComboBoxSensor.addElement("Temperature");
 		modelComboBoxSensor.addElement("Light");
@@ -523,17 +540,6 @@ public class MCWindow {
 		gbc_textPane.gridy = 1;
 		panelTable.add(textPane, gbc_textPane);
 
-		// *************** Listener ***************************
-
-		/**
-		 * Changes value of maxReceivers by spinner.
-		 */
-
-		
-		/**
-		 * Establish connection
-		 */
-
 	}
 
 	/*
@@ -542,7 +548,7 @@ public class MCWindow {
 	 */
 	private void fillReceiverList(int maxReceivers) {
 
-		DefaultListModel model = new DefaultListModel<String>();
+		DefaultListModel model = new DefaultListModel();
 
 		for (int i = 0; i < maxReceivers; i++) {
 			model.addElement("Mote " + String.valueOf(i));
@@ -556,7 +562,7 @@ public class MCWindow {
 	 * Fills comboBox with Strings from "Mote 0" to "Mote 'maxReceivers'".
 	 */
 	private void fillComboBoxWithMotes(int maxReceivers, JComboBox box) {
-		DefaultComboBoxModel model = new DefaultComboBoxModel<String>();
+		DefaultComboBoxModel model = new DefaultComboBoxModel();
 
 		for (int i = 0; i < maxReceivers; i++) {
 			model.addElement("Mote " + String.valueOf(i));
@@ -577,7 +583,7 @@ public class MCWindow {
 				.getSensorData();
 
 		int chosenMote = comboBoxSensorMote.getSelectedIndex();
-		int chosenSensor = comboBoxSensor.getSelectedIndex();
+		int chosenSensor = comboBoxSensor.getSelectedIndex() + 1;
 
 		// search for all items by sensor and mote
 		ArrayList<SensorData> sensorDataByMoteAndSensor = new ArrayList<SensorData>();
@@ -600,7 +606,11 @@ public class MCWindow {
 		}
 
 		DrawGraph mainPanel = new DrawGraph(dataPoints);
+		
+		panelGraph.removeAll();
 		panelGraph.add(mainPanel);
+		panelGraph.updateUI();
+		
 
 	}
 
@@ -614,25 +624,30 @@ public class MCWindow {
 		ArrayList<MoteTable> moteTables = MoteTableManager.getInstance()
 				.getMoteTables();
 
-		MoteTable chosenMoteTable;
-		try {
-			chosenMoteTable = moteTables.get(chosenMote);
-		} catch (Throwable th) {
-			chosenMoteTable = null;
+		MoteTable foundMoteTable = null;
+		MoteTable currentTable = null;
+		// search for table
+		for (Iterator<MoteTable> iter = moteTables.iterator(); iter.hasNext();) {
+			currentTable = iter.next();
+			if (currentTable.getOwner() == chosenMote) {
+				foundMoteTable = currentTable;
+			}
 		}
+
 		// print table
-		if (chosenMoteTable != null) {
+		if (foundMoteTable != null) {
 			textPane.setText("Neighbours of chosen mote (Msg received: "
-					+ chosenMoteTable.getReceiveDate() + "):\n");
-			int[] neighbours = chosenMoteTable.getNeighbours();
-			int[] lastContact = chosenMoteTable.getLastContact();
+					+ foundMoteTable.getReceiveDate() + "):\n");
+			int[] neighbours = foundMoteTable.getNeighbours();
+			int[] lastContact = foundMoteTable.getLastContact();
 
 			for (int i = 0; i < neighbours.length; i++) {
-
-				textPane.setText(textPane.getText() + "Mote "
-						+ String.valueOf(neighbours[i])
-						+ "  ... last contact: "
-						+ String.valueOf(lastContact[i]) + "\n");
+				if (neighbours[i] < maxReceivers + 1) {
+					textPane.setText(textPane.getText() + "Mote "
+							+ String.valueOf(neighbours[i])
+							+ "  ... last contact: "
+							+ String.valueOf(lastContact[i]) + "\n");
+				}
 			}
 
 		} else {
@@ -640,13 +655,13 @@ public class MCWindow {
 		}
 
 	}
-	
+
 	/**
 	 * Checks receivers and parses IP, Port and LEDs. Invokes sending of
 	 * messages.
 	 * 
 	 */
-	private  void sendButtonClicked(){
+	private void sendButtonClicked() {
 		// Connected?
 		if (mif == null) {
 			textAreaOutput.setText("Establish connection first!\n"
@@ -664,7 +679,7 @@ public class MCWindow {
 
 				// Are receivers selected?
 				int[] receivers = receiverList.getSelectedIndices();
-				if (receivers != null) {
+				if (receivers.length > 0) {
 
 					// make ledNumber bit-ready
 					int ledNumber = 0;
@@ -676,7 +691,7 @@ public class MCWindow {
 						ledNumber += 4;
 
 					// check sensors checkboxes
-					short[] sensors = new short[3];
+					short[] sensors = new short[2];
 					for (int i = 0; i < sensors.length; i++) {
 						sensors[i] = 0;
 					}
@@ -688,8 +703,8 @@ public class MCWindow {
 						sensors[2] = 1;
 
 					// invoke sending of messages
-					sendMessage = new Thread(new SendMessages(mif,
-							seqNumber, ledNumber, receivers, sensors));
+					sendMessage = new Thread(new SendMessages(mif, seqNumber,
+							ledNumber, receivers, sensors));
 
 					sendMessage.start();
 
@@ -704,11 +719,11 @@ public class MCWindow {
 			}
 		}
 	}
-	
-	/*
-	 * 
+
+	/**
+	 * Establish connection
 	 */
-	private void buttonConnectClicked(){
+	private void buttonConnectClicked() {
 		// parse IP and Port
 		String textFieldIPString = textFieldIP.getText();
 		String ip = textFieldIPString.trim();
@@ -727,8 +742,7 @@ public class MCWindow {
 						+ "Successfully connected!\n");
 			} else {
 				textAreaOutput.setText(textAreaOutput.getText()
-						+ "Can't connect to sf@" + ip + ":" + port
-						+ "!\n");
+						+ "Can't connect to sf@" + ip + ":" + port + "!\n");
 			}
 		} else {
 			// Disconnect!
@@ -739,4 +753,6 @@ public class MCWindow {
 		}
 	}
 	
+	
+
 }

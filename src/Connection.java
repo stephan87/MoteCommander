@@ -2,6 +2,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 import net.tinyos.message.Message;
 import net.tinyos.message.MessageListener;
@@ -27,15 +28,14 @@ public class Connection implements MessageListener  {
 	 * @see net.tinyos.message.MessageListener#messageReceived(int, net.tinyos.message.Message)
 	 */
 	@SuppressWarnings("deprecation")
-	public synchronized void messageReceived(int to, Message message) {
-		System.out.println("Message received - type: "+message.amType());
+	public  void messageReceived(int to, Message message) {
+		//System.out.println("Message received - type: "+message.amType());
 		
 		// get local time
 		DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 		Date date = new Date();
 		
 		int messageType = message.amType();
-		//TODO add message size
 		if(messageType == 6 && (message.dataLength() == SerialMsg.DEFAULT_MESSAGE_SIZE)) // AM_COMMANDMSG
 		{
 			SerialMsg msg = (SerialMsg) message;
@@ -44,37 +44,47 @@ public class Connection implements MessageListener  {
 			System.out.println("seqNum: " + msg.get_seqNum());
 			System.out.println("ledNum: " + msg.get_ledNum());
 			System.out.println("receiver: " + msg.get_receiver());
+		
 			
 			if((payload!= null)
-					&& (msg.get_sender() == payload.get_sender())
+					&& (msg.get_sender() == 0)
 					&& (msg.get_seqNum() == payload.get_seqNum())
-					&& (msg.get_receiver()== payload.get_receiver()))
+					)
 			{
 				MCWindow.textAreaOutput.setText("Message successfully forwarded to mote \"0\"!\n"+ MCWindow.textAreaOutput.getText());
 				try{
 					MCWindow.sendMessage.resume();
 				}catch (Exception e){
-					
+					System.out.println("can't wake up sending of messages");
 				}
 			}
 		}
 		else if(messageType == 3 && (message.dataLength() == TableMsg.DEFAULT_MESSAGE_SIZE) ) //AM_TABLEMSG ... no update when create view
 		{
+			
 			TableMsg tableMsg = (TableMsg) message;
-		
+			//System.out.println("Table of Node: "+tableMsg.get_sender());
 			MoteTable moteTable = new MoteTable(tableMsg.get_sender(), tableMsg.get_nodeId(), 
 					tableMsg.get_lastContact(), dateFormat.format(date));
 			
 			ArrayList<MoteTable> moteTables = MoteTableManager.getInstance().getMoteTables();
-			try{
-				// override
-				moteTables.set(tableMsg.get_sender(), moteTable);
-			}catch(Throwable th){
-				// add
-				moteTables.add(tableMsg.get_sender(), moteTable);
+			
+			MoteTable foundMoteTable = null;
+			MoteTable currentTable = null;
+			
+			for(Iterator<MoteTable> iter = moteTables.iterator(); iter.hasNext();){
+				currentTable = iter.next();
+				if(currentTable.getOwner() == moteTable.getOwner()){
+					foundMoteTable = currentTable;
+				}
 			}
-							
-			System.out.println("Table of Node: "+tableMsg.get_sender());
+			
+			if(foundMoteTable!=null){
+				int pos = moteTables.indexOf(foundMoteTable);
+				moteTables.set(pos, moteTable);
+			}else{
+				moteTables.add(moteTable);
+			}
 			
 		}
 		else if(messageType == 4 && (message.dataLength() == SensorMsg.DEFAULT_MESSAGE_SIZE)) //AM_TABLEMSG

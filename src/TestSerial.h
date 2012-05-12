@@ -64,4 +64,3 @@ typedef nx_struct TableMsg {
 
 
 #endif
-

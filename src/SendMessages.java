@@ -11,6 +11,7 @@ public class SendMessages implements Runnable {
 	private int seqnumber;
 	private int[] receivers;
 	private short[] sensors;
+	private short isAck;
 
 	@SuppressWarnings("unused")
 	private SendMessages() {
@@ -28,18 +29,18 @@ public class SendMessages implements Runnable {
 	@SuppressWarnings("deprecation")
 	public void sendPackets() {
 
-		for(int receiver = 0; receiver < receivers.length; receiver++){
+		for(int i = 0; i < receivers.length; i++){
 			
 			SerialMsg payload = new SerialMsg();
 			
 			try {
-				payload.set_receiver(receiver);
+				payload.set_receiver(receivers[i]);
 				payload.set_sender(99);
 				payload.set_seqNum(seqnumber++);
 				payload.set_ledNum(ledNumber);
 				payload.set_sensor(sensors);
 				MCWindow.textAreaOutput.setText("Forward message to mote \"0\" with receiver "
-				+ receiver +"!\n"+ MCWindow.textAreaOutput.getText());
+				+ receivers[i] +"!\n"+ MCWindow.textAreaOutput.getText());
 				moteIF.send(0, payload);
 				
 				// update global sequencenumber
