@@ -55,12 +55,12 @@ public class MCWindow {
 	private JTextField textFieldPort;
 	private JTextField textFieldIP;
 	private JList receiverList;
-	private JComboBox comboBoxTable;
-	private JComboBox comboBoxSensorMote;
-	private JTextPane textPane;
-	private JPanel panelGraph;
+	private static JComboBox comboBoxTable;
+	private static JComboBox comboBoxSensorMote;
+	private static JTextPane textPane;
+	private static JPanel panelGraph;
 	private JTabbedPane tabbedPane;
-	private JComboBox comboBoxSensor;
+	private static JComboBox comboBoxSensor;
 	private JButton buttonConnect;
 	private JCheckBox checkBoxLED1;
 	private JCheckBox checkBoxLED2;
@@ -76,6 +76,21 @@ public class MCWindow {
 	public static Thread sendMessage = null;
 
 	private static int seqNumber = 1;
+	
+	/**
+	 * @return the seqNumber which was used for the last command msg
+	 */
+	public static int getSeqNumber() {
+		return seqNumber;
+	}
+
+	/**
+	 * @param seqNumber the seqNumber to set for the next command msg
+	 */
+	public static void setSeqNumber(int seqNumber) {
+		MCWindow.seqNumber = seqNumber;
+	}
+
 	private Connection connection;
 
 	/**
@@ -105,13 +120,7 @@ public class MCWindow {
 
 	}
 
-	public static int getSeqNumber() {
-		return seqNumber;
-	}
-
-	public static void setSeqNumber(int seqNumber) {
-		MCWindow.seqNumber = seqNumber;
-	}
+	
 
 	/**
 	 * Initialize the contents of the frame.
@@ -203,7 +212,7 @@ public class MCWindow {
 		panelCon.add(lblIp, gbc_lblIp);
 
 		textFieldIP = new JTextField();
-		textFieldIP.setText("localhost"); // "137.226.59.149"
+		textFieldIP.setText("137.226.59.146"); // "137.226.59.149"
 		GridBagConstraints gbc_textFieldIP = new GridBagConstraints();
 		gbc_textFieldIP.insets = new Insets(0, 0, 5, 0);
 		gbc_textFieldIP.fill = GridBagConstraints.BOTH;
@@ -221,7 +230,7 @@ public class MCWindow {
 		panelCon.add(labelPort, gbc_labelPort);
 
 		textFieldPort = new JTextField();
-		textFieldPort.setText("9002");
+		textFieldPort.setText("2001");
 		GridBagConstraints gbc_textFieldPort = new GridBagConstraints();
 		gbc_textFieldPort.fill = GridBagConstraints.BOTH;
 		gbc_textFieldPort.insets = new Insets(0, 0, 5, 0);
@@ -575,9 +584,9 @@ public class MCWindow {
 	 * Initiates drawing of the graph by selected value of comboBoxSensorMote
 	 * and comboBoxSensor
 	 */
-	private void drawGraph() {
+	public static void drawGraph() {
 
-		List<Integer> dataPoints = new ArrayList<Integer>();
+		List<Integer> dataList = new ArrayList<Integer>();
 
 		ArrayList<SensorData> allData = SensorDataManager.getInstance()
 				.getSensorData();
@@ -601,23 +610,49 @@ public class MCWindow {
 				.hasNext();) {
 			currentReadings = iter.next().getReadings();
 			for (int i = 0; i < currentReadings.length; i++) {
-				dataPoints.add(currentReadings[i]);
+				dataList.add(currentReadings[i]);
 			}
 		}
 
-		DrawGraph mainPanel = new DrawGraph(dataPoints);
-		
+		// recalc sensordata to real values
+		Integer realValue = 0;
+		Integer currentInt;
+		List<Integer> realValueList = new ArrayList<Integer>();
+		for (Iterator<Integer> iter = dataList.iterator(); iter.hasNext();) {
+			currentInt = iter.next();
+
+			if (chosenSensor == 1) {
+				// Humidity
+				realValue = Integer.valueOf((int) (-0.0000028 * currentInt
+						* currentInt + 0.0405 * currentInt - 4));
+
+			}
+			if (chosenSensor == 2) {
+				// Temperature
+				realValue = Integer
+						.valueOf((int) (-38.4 + (0.0098 * currentInt)));
+
+			}
+			if (chosenSensor == 3) {
+				// Light no conversion
+				realValue = Integer.valueOf((int) (currentInt));
+
+			}
+
+			realValueList.add(realValue);
+		}
+		DrawGraph mainPanel = new DrawGraph(realValueList);
+
 		panelGraph.removeAll();
 		panelGraph.add(mainPanel);
 		panelGraph.updateUI();
-		
 
 	}
 
 	/*
 	 * Fills table view by selected mote of comboBoxTable.
 	 */
-	private void fillTableView() {
+	public static void fillTableView() {
 
 		int chosenMote = comboBoxTable.getSelectedIndex();
 
@@ -691,7 +726,7 @@ public class MCWindow {
 						ledNumber += 4;
 
 					// check sensors checkboxes
-					short[] sensors = new short[2];
+					short[] sensors = new short[3];
 					for (int i = 0; i < sensors.length; i++) {
 						sensors[i] = 0;
 					}
@@ -752,7 +787,5 @@ public class MCWindow {
 					+ "Successfully disconnected!\n");
 		}
 	}
-	
-	
 
 }

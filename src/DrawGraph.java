@@ -24,7 +24,7 @@ public class DrawGraph extends JPanel {
 	private static final Color GRAPH_LINE_COLOR = Color.DARK_GRAY;
 	private static final Color GRAPH_POINT_COLOR = Color.BLACK;
 	private static final Stroke GRAPH_LINE_SIZE = new BasicStroke(1f);
-	private static final int GRAPH_POINT_WIDTH = 6;
+	private static final int GRAPH_POINT_WIDTH = 2;
 	private static final int Y_AXES_MARK_COUNT = 10;
 	private List<Integer> dataPoints; // input
 	List<Point> graphPoints; // to plot
@@ -32,6 +32,9 @@ public class DrawGraph extends JPanel {
 
 	public DrawGraph(List<Integer> dataPoints) {
 		this.dataPoints = dataPoints;
+		
+		// reset
+		MAX_VALUE = 0;
 		//search max
 		int current=0;
 		for(Iterator<Integer> iter = dataPoints.iterator();iter.hasNext();){
@@ -40,6 +43,8 @@ public class DrawGraph extends JPanel {
 				MAX_VALUE = current;
 			}
 		}
+		// better view 
+		MAX_VALUE = MAX_VALUE/2 + MAX_VALUE;
 	}
 
 	@Override

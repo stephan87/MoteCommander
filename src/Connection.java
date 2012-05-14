@@ -1,3 +1,4 @@
+import java.rmi.ConnectException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Connection implements MessageListener  {
 
 	private MoteIF moteIF;
 	public static SerialMsg payload = null;
+	public static boolean resume = false;
 
 	/*
 	 * (non-Javadoc)
@@ -54,16 +56,17 @@ public class Connection implements MessageListener  {
 				MCWindow.textAreaOutput.setText("Message successfully forwarded to mote \"0\"!\n"+ MCWindow.textAreaOutput.getText());
 				try{
 					MCWindow.sendMessage.resume();
+					resume = true;
 				}catch (Exception e){
 					System.out.println("can't wake up sending of messages");
 				}
 			}
 		}
-		else if(messageType == 3 && (message.dataLength() == TableMsg.DEFAULT_MESSAGE_SIZE) ) //AM_TABLEMSG ... no update when create view
+		else if(messageType == 3 && (message.dataLength() == TableMsg.DEFAULT_MESSAGE_SIZE) ) //AM_TABLEMSG 
 		{
 			
 			TableMsg tableMsg = (TableMsg) message;
-			//System.out.println("Table of Node: "+tableMsg.get_sender());
+			System.out.println("Table of Node: "+tableMsg.get_sender());
 			MoteTable moteTable = new MoteTable(tableMsg.get_sender(), tableMsg.get_nodeId(), 
 					tableMsg.get_lastContact(), dateFormat.format(date));
 			
@@ -86,8 +89,11 @@ public class Connection implements MessageListener  {
 				moteTables.add(moteTable);
 			}
 			
+			// automatic update of view
+			MCWindow.fillTableView();
+			
 		}
-		else if(messageType == 4 && (message.dataLength() == SensorMsg.DEFAULT_MESSAGE_SIZE)) //AM_TABLEMSG
+		else if(messageType == 4 && (message.dataLength() == SensorMsg.DEFAULT_MESSAGE_SIZE)) //AM_sensor
 		{
 			SensorMsg sensorMsg = (SensorMsg) message;
 			
@@ -103,6 +109,8 @@ public class Connection implements MessageListener  {
 				sensorDataArray.clear();
 			}
 			
+			// automatic update of view
+			MCWindow.drawGraph();
 			
 			System.out.println("SensorData from Node: "+sensorMsg.get_sender());
 		}	
@@ -121,8 +129,8 @@ public class Connection implements MessageListener  {
 		try {
 			phoenix = BuildSource.makePhoenix(source, PrintStreamMessenger.err);
 			mif = new MoteIF(phoenix);
-		} catch (Exception e) {
-			//can't connect
+		} catch (Exception e)
+		{
 			return null;
 		}
 		

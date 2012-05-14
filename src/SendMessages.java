@@ -28,35 +28,45 @@ public class SendMessages implements Runnable {
 
 	@SuppressWarnings("deprecation")
 	public void sendPackets() {
-
+		
 		for(int i = 0; i < receivers.length; i++){
 			
 			SerialMsg payload = new SerialMsg();
 			
-			try {
-				payload.set_receiver(receivers[i]);
-				payload.set_sender(99);
-				payload.set_seqNum(seqnumber++);
-				payload.set_ledNum(ledNumber);
-				payload.set_sensor(sensors);
-				MCWindow.textAreaOutput.setText("Forward message to mote \"0\" with receiver "
-				+ receivers[i] +"!\n"+ MCWindow.textAreaOutput.getText());
-				moteIF.send(0, payload);
-				
-				// update global sequencenumber
-				MCWindow.setSeqNumber(seqnumber);
-				
-				// save last sent message to compare with ack
-				Connection.payload = payload;
-				//TODO check ack?
-				System.out.println("supsend");
-				
-				// sleep until ack received
-				MCWindow.sendMessage.suspend();
-				
-			} catch (Exception exception) {
-				MCWindow.textAreaOutput.setText(exception.toString()+"\n"+MCWindow.textAreaOutput.getText());
-			}
+			
+			while(Connection.resume == false){ // retransmit if not waked up -> timeout
+				try {
+					payload.set_receiver(receivers[i]);
+					payload.set_sender(99);
+					payload.set_seqNum(seqnumber++);
+					payload.set_ledNum(ledNumber);
+					payload.set_sensor(sensors);
+					MCWindow.textAreaOutput.setText("Forward message to mote \"0\" with receiver "
+					+ receivers[i] +"!\n"+ MCWindow.textAreaOutput.getText());
+					moteIF.send(0, payload);
+					
+					// update global sequencenumber
+					MCWindow.setSeqNumber(seqnumber);
+					
+					// save last sent message to compare with ack
+					Connection.payload = payload;
+					//TODO check only ack?
+					System.out.println("supsend");
+					
+					// sleep until ack received
+					MCWindow.sendMessage.sleep(2000);
+					if(Connection.resume == false){
+						MCWindow.textAreaOutput.setText("Retransmitting message!\n" + MCWindow.textAreaOutput.getText());
+					}
+					//MCWindow.sendMessage.suspend();
+					
+					
+				} catch (Exception exception) {
+					MCWindow.textAreaOutput.setText(exception.toString()+"\n"+MCWindow.textAreaOutput.getText());
+				}
+			}	
+			
+			Connection.resume = false;
 		}
 		
 	}
