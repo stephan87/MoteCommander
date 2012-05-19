@@ -671,17 +671,19 @@ public class MCWindow {
 
 		// print table
 		if (foundMoteTable != null) {
-			textPane.setText("Neighbours of chosen mote (Msg received: "
+			int parent = foundMoteTable.getParent();
+			textPane.setText("Neighbours of chosen mote has parent: "+String.valueOf(parent)+" (Msg received: "
 					+ foundMoteTable.getReceiveDate() + "):\n");
 			int[] neighbours = foundMoteTable.getNeighbours();
 			int[] lastContact = foundMoteTable.getLastContact();
+			 
 
 			for (int i = 0; i < neighbours.length; i++) {
 				if (neighbours[i] < maxReceivers + 1) {
 					textPane.setText(textPane.getText() + "Mote "
 							+ String.valueOf(neighbours[i])
 							+ "  ... last contact: "
-							+ String.valueOf(lastContact[i]) + "\n");
+							+ String.valueOf(lastContact[i])+ "\n");
 				}
 			}
 

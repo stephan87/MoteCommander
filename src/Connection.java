@@ -68,7 +68,7 @@ public class Connection implements MessageListener  {
 			TableMsg tableMsg = (TableMsg) message;
 			System.out.println("Table of Node: "+tableMsg.get_sender());
 			MoteTable moteTable = new MoteTable(tableMsg.get_sender(), tableMsg.get_nodeId(), 
-					tableMsg.get_lastContact(), dateFormat.format(date));
+					tableMsg.get_lastContact(),tableMsg.get_parent(), dateFormat.format(date));
 			
 			ArrayList<MoteTable> moteTables = MoteTableManager.getInstance().getMoteTables();
 			
