@@ -22,11 +22,11 @@ enum {
   AM_MAXNODEID				= 65535,	// used as default undefined value
   NREADINGS 				= 5, 		// count of sensor reading until transmission
   DEFAULT_SAMPLING_INTERVAL = 1000, 	// Default sensor read interval period.
-  SERIAL_ADDR				= 99 		// serial address
+  SERIAL_ADDR				= 99, 		// serial address
+  UNDEFINED					= 0xFFFF
 };
 
 typedef nx_struct CommandMsg {
-	nx_uint8_t type;
   nx_uint16_t seqNum;
   nx_uint16_t ledNum;
   nx_uint16_t sender;
@@ -36,7 +36,6 @@ typedef nx_struct CommandMsg {
 } CommandMsg;
 
 typedef nx_struct BeaconMsg {
-	nx_uint8_t type;
   nx_uint16_t sender;
   nx_uint16_t parent;		// chosen parent
   nx_uint16_t hops;		// hop count to mote 0
@@ -56,7 +55,6 @@ typedef struct MoteTableEntry {
 } MoteTableEntry;
 
 typedef nx_struct SensorMsg {
-	nx_uint8_t type;
 	nx_uint16_t version; /* Version of the interval. */
   nx_uint16_t receiver; 			/* should be serial */
   nx_uint8_t sensor; 				/* From which sensor? 0 means not active*/
@@ -68,7 +66,6 @@ typedef nx_struct SensorMsg {
 } SensorMsg;
 
 typedef nx_struct TableMsg {
-	nx_uint8_t type;
   nx_uint16_t seqNum;
   nx_uint16_t sender; 
   nx_uint8_t receiver; 
