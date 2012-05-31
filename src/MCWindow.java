@@ -1,7 +1,10 @@
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Stroke;
+
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -36,12 +39,31 @@ import javax.swing.SwingConstants;
 import javax.swing.JTabbedPane;
 import javax.swing.JComboBox;
 import java.awt.Dimension;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JTextPane;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.event.PopupMenuEvent;
+
+import org.apache.commons.collections15.Transformer;
+
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.graph.DirectedGraph;
+import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.SparseMultigraph;
+import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.visualization.BasicVisualizationServer;
+import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
+import edu.uci.ics.jung.visualization.transform.*;
+
 
 /**
  * Builds window for the MoteCommander application.
@@ -51,6 +73,7 @@ import javax.swing.event.PopupMenuEvent;
  */
 public class MCWindow {
 
+	private static Graph<Integer,String> g;
 	private JFrame frmMotecommander;
 	private JTextField textFieldPort;
 	private JTextField textFieldIP;
@@ -59,6 +82,7 @@ public class MCWindow {
 	private static JComboBox comboBoxSensorMote;
 	private static JTextPane textPane;
 	private static JPanel panelGraph;
+	private static JPanel panelNetworkGraph;
 	private JTabbedPane tabbedPane;
 	private static JComboBox comboBoxSensor;
 	private JButton buttonConnect;
@@ -93,6 +117,7 @@ public class MCWindow {
 
 	private Connection connection;
 
+
 	/**
 	 * Launch the application.
 	 */
@@ -117,7 +142,13 @@ public class MCWindow {
 		fillReceiverList(maxReceivers);
 		fillComboBoxWithMotes(maxReceivers, comboBoxTable);
 		fillComboBoxWithMotes(maxReceivers, comboBoxSensorMote);
-
+		g = new DirectedSparseGraph<Integer, String>();
+		/*ArrayList<MoteTable> testList = new ArrayList<MoteTable>();
+		int[] neighbors = {1,2};
+		int[] contacts = {0,0};
+		testList.add(new MoteTable(0,neighbors, contacts, 1, "0"));
+		MoteTableManager.getInstance().setMoteTables(testList);*/
+		//updateGraph(testList);
 	}
 
 	
@@ -212,7 +243,7 @@ public class MCWindow {
 		panelCon.add(lblIp, gbc_lblIp);
 
 		textFieldIP = new JTextField();
-		textFieldIP.setText("137.226.59.146"); // "137.226.59.149"
+		textFieldIP.setText("localhost"); // "137.226.59.149" //dantoine: 137.226.59.146
 		GridBagConstraints gbc_textFieldIP = new GridBagConstraints();
 		gbc_textFieldIP.insets = new Insets(0, 0, 5, 0);
 		gbc_textFieldIP.fill = GridBagConstraints.BOTH;
@@ -230,7 +261,7 @@ public class MCWindow {
 		panelCon.add(labelPort, gbc_labelPort);
 
 		textFieldPort = new JTextField();
-		textFieldPort.setText("2001");
+		textFieldPort.setText("9002");
 		GridBagConstraints gbc_textFieldPort = new GridBagConstraints();
 		gbc_textFieldPort.fill = GridBagConstraints.BOTH;
 		gbc_textFieldPort.insets = new Insets(0, 0, 5, 0);
@@ -431,6 +462,11 @@ public class MCWindow {
 		JScrollPane sbrText = new JScrollPane(textAreaOutput);
 		sbrText.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		panelOutput.add(sbrText);
+		
+		panelNetworkGraph = new JPanel();
+		panelNetworkGraph.setBorder(new EmptyBorder(5, 5, 5, 5));
+		tabbedPane.addTab("Network Graph", null, panelNetworkGraph, null);
+		panelNetworkGraph.setLayout(new BorderLayout(0, 0));
 
 		JPanel panelSensors = new JPanel();
 		tabbedPane.addTab("SensorData", null, panelSensors, null);
@@ -648,6 +684,95 @@ public class MCWindow {
 		panelGraph.updateUI();
 
 	}
+	
+	public static void updateGraph(ArrayList<MoteTable> tables)
+	{		
+		// first remove all edges
+		Collection<String> allEdges = g.getEdges();
+		//Collection<String> copyEdges = new ArrayList<String>(allEdges);
+		ArrayList<MoteTable> copyTables = new ArrayList<MoteTable>(tables);
+		
+		//System.out.println("current Thread: "+Thread.currentThread().getId());
+		
+		
+		DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+		// then add the new ones
+		for (MoteTable moteTable : copyTables) 
+		{
+			int curOwner = moteTable.getOwner();
+			Date currentDate = new Date();
+			Date lastTableReceivedDate = new Date();
+			Date transformedCurrent = new Date();
+			try {
+				lastTableReceivedDate = dateFormat.parse(moteTable.getReceiveDate());
+				transformedCurrent = dateFormat.parse(dateFormat.format(currentDate));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			System.out.println("formattedLast: "+moteTable.getReceiveDate()+" formattedCur: "+dateFormat.format(currentDate));
+			//System.out.println("last table received: "+lastTableReceivedDate.getTime()+" current: "+currentDate.getTime()+" test: "+test.getTime());
+			if(transformedCurrent.getTime() - lastTableReceivedDate.getTime() < 15000)
+			{
+				g.addVertex((Integer)curOwner);
+				
+				// iterate over each neighbor and create an edge
+				for (int neighbor : moteTable.getNeighbours()) 
+				{
+					if(neighbor != 65535)
+					{
+						g.addEdge(curOwner+","+neighbor,curOwner,neighbor,EdgeType.DIRECTED);
+					}
+				}
+			}
+			else
+			{
+				tables.remove(moteTable);
+				System.out.println("Removed Node "+moteTable.getOwner()+" which didn't answer for more than 15 seconds!");
+				//better clear all edges
+				Collection<String> edgesToRemove = g.getIncidentEdges(moteTable.getOwner());
+				Iterator<String> iter = edgesToRemove.iterator();
+				while(iter.hasNext())
+				{
+					g.removeEdge(iter.next());
+				}
+			}			
+		}
+		
+		// The Layout<V, E> is parameterized by the vertex and edge types
+		Layout<Integer, String> layout = new CircleLayout<Integer, String>(g);
+		layout.setSize(new Dimension(300,300)); // sets the initial size of the space
+		
+		// The BasicVisualizationServer<V,E> is parameterized by the edge types
+		BasicVisualizationServer<Integer,String> vv = new BasicVisualizationServer<Integer,String>(layout);
+		vv.setPreferredSize(new Dimension(350,350)); //Sets the viewing area size
+		vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<Integer>());
+		
+		// Set up a new stroke Transformer for the edges
+		float dash[] = {10.0f};
+		final Stroke edgeStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
+		final Stroke edgeNormal = new BasicStroke();
+		
+		Transformer<String, Stroke> edgeStrokeTransformer = new Transformer<String, Stroke>() {
+			public Stroke transform(String s) {
+				String[] edgeElems = s.split(",");
+				//System.out.println("edge: "+s+"edgeElems: "+edgeElems[0]+","+edgeElems[1]);
+				int start = Integer.valueOf(edgeElems[0]);
+				int end = Integer.valueOf(edgeElems[1]);
+				
+				for (MoteTable m : MoteTableManager.getInstance().getMoteTables()) {
+					if(m.getOwner() == start && m.getParent() == end)
+						return edgeNormal;
+				}
+				return edgeStroke;
+			}
+		};
+		vv.getRenderContext().setEdgeStrokeTransformer(edgeStrokeTransformer);
+		
+		panelNetworkGraph.removeAll();
+		panelNetworkGraph.add(vv);
+	}
 
 	/*
 	 * Fills table view by selected mote of comboBoxTable.
@@ -656,9 +781,9 @@ public class MCWindow {
 
 		int chosenMote = comboBoxTable.getSelectedIndex();
 
-		ArrayList<MoteTable> moteTables = MoteTableManager.getInstance()
-				.getMoteTables();
-
+		ArrayList<MoteTable> moteTables = MoteTableManager.getInstance().getMoteTables();
+		
+		updateGraph(moteTables);
 		MoteTable foundMoteTable = null;
 		MoteTable currentTable = null;
 		// search for table

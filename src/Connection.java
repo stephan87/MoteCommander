@@ -91,7 +91,6 @@ public class Connection implements MessageListener  {
 			
 			// automatic update of view
 			MCWindow.fillTableView();
-			
 		}
 		else if(messageType == 4 && (message.dataLength() == SensorMsg.DEFAULT_MESSAGE_SIZE)) //AM_sensor
 		{
