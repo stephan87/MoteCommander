@@ -76,6 +76,8 @@ public class MCWindow {
 	private static Graph<Integer,String> g;
 	private JFrame frmMotecommander;
 	private JTextField textFieldPort;
+	private JTextField textFieldPortListenStart;
+	private JTextField textFieldPortListenEnd;
 	private JTextField textFieldIP;
 	private JList receiverList;
 	private static JComboBox comboBoxTable;
@@ -269,13 +271,33 @@ public class MCWindow {
 		gbc_textFieldPort.gridy = 1;
 		panelCon.add(textFieldPort, gbc_textFieldPort);
 		textFieldPort.setColumns(10);
+		
+		textFieldPortListenStart = new JTextField();
+		textFieldPortListenStart.setText("9002");
+		GridBagConstraints gbc_textFieldPortListenStart = new GridBagConstraints();
+		gbc_textFieldPortListenStart.fill = GridBagConstraints.WEST;
+		gbc_textFieldPortListenStart.insets = new Insets(0, 0, 5, 0);
+		gbc_textFieldPortListenStart.gridx = 0;
+		gbc_textFieldPortListenStart.gridy = 2;
+		panelCon.add(textFieldPortListenStart, gbc_textFieldPortListenStart);
+		textFieldPortListenStart.setColumns(4);
+		
+		textFieldPortListenEnd = new JTextField();
+		textFieldPortListenEnd.setText("9002");
+		GridBagConstraints gbc_textFieldPortListenEnd = new GridBagConstraints();
+		gbc_textFieldPortListenEnd.fill = GridBagConstraints.WEST;
+		gbc_textFieldPortListenEnd.insets = new Insets(0, 20, 5, 0);
+		gbc_textFieldPortListenEnd.gridx = 1;
+		gbc_textFieldPortListenEnd.gridy = 2;
+		panelCon.add(textFieldPortListenEnd, gbc_textFieldPortListenEnd);
+		textFieldPortListenEnd.setColumns(4);
 
 		buttonConnect = new JButton("Connect!");
 
 		GridBagConstraints gbc_buttonConnect = new GridBagConstraints();
 		gbc_buttonConnect.fill = GridBagConstraints.HORIZONTAL;
 		gbc_buttonConnect.gridx = 1;
-		gbc_buttonConnect.gridy = 2;
+		gbc_buttonConnect.gridy = 3;
 		panelCon.add(buttonConnect, gbc_buttonConnect);
 		buttonConnect.addMouseListener(new MouseAdapter() {
 			@Override
@@ -891,12 +913,27 @@ public class MCWindow {
 		String ip = textFieldIPString.trim();
 
 		String textFieldPortString = textFieldPort.getText();
-		String port = textFieldPortString.trim();
+		String commandPort = textFieldPortString.trim();
+		
+		int startListenPort = Integer.valueOf(textFieldPortListenStart.getText());
+		int endListenPort = Integer.valueOf(textFieldPortListenEnd.getText());
+		
+		int[] listenPorts = new int[0];
+		int portCount = endListenPort - startListenPort;
+		
+		if(portCount > 0){
+			listenPorts = new int[portCount];
+		
+			for (int i=0;i<portCount;i++) {
+				listenPorts[i] = startListenPort + i + 1;
+			}
+		}
 
 		if (mif == null) {
 			// create connection
 			connection = new Connection();
-			mif = connection.connect(port, ip);
+			mif = connection.connect(listenPorts,commandPort, ip);
+			
 			// Successful?
 			if (mif != null) {
 				buttonConnect.setText("Disconnect!");
@@ -904,7 +941,7 @@ public class MCWindow {
 						+ "Successfully connected!\n");
 			} else {
 				textAreaOutput.setText(textAreaOutput.getText()
-						+ "Can't connect to sf@" + ip + ":" + port + "!\n");
+						+ "Can't connect to sf@" + ip + ":" + commandPort + "!\n");
 			}
 		} else {
 			// Disconnect!

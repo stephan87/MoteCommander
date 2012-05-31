@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.rmi.ConnectException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -9,6 +10,7 @@ import net.tinyos.message.Message;
 import net.tinyos.message.MessageListener;
 import net.tinyos.message.MoteIF;
 import net.tinyos.packet.BuildSource;
+import net.tinyos.packet.PhoenixError;
 import net.tinyos.packet.PhoenixSource;
 import net.tinyos.util.PrintStreamMessenger;
 
@@ -24,6 +26,7 @@ public class Connection implements MessageListener  {
 	private MoteIF moteIF;
 	public static SerialMsg payload = null;
 	public static boolean resume = false;
+	private PhoenixSource phoenixSource;
 
 	/*
 	 * (non-Javadoc)
@@ -118,27 +121,52 @@ public class Connection implements MessageListener  {
 	/*
 	 * Establishes a connection to a given ip and registers message listeners.
 	 */
-	public MoteIF connect(String port, String ip) {
+	public MoteIF connect(int[] listenPorts, String commandPort, String ip) {
 
-		PhoenixSource phoenix;
+		for (int port : listenPorts) {
+			
+			PhoenixSource phoenix;
+			String source = "sf@" + ip + ":" + String.valueOf(port);
+			MyPhoenixError errorHandler = new MyPhoenixError();
 	
-		MoteIF mif = null;
-		String source = "sf@" + ip + ":" + port;
+			try {
+				System.out.println("Try to build source for: "+source);
+				phoenix = BuildSource.makePhoenix(source, PrintStreamMessenger.err);
+				errorHandler.setSource(phoenix);
+				phoenix.setPacketErrorHandler(errorHandler);
+			} catch (Exception e)
+			{
+				System.out.println("Fatal Error: exiting");
+				return null;
+			}
+		}
+		
+		// build the real command interface source
+		
+		PhoenixSource commandPhoenix;
+		
+		MoteIF commandMif = null;
+		String source = "sf@" + ip + ":" + commandPort;
+		MyPhoenixError errorHandler = new MyPhoenixError();
 
+		System.out.println("Create Command Interface: "+source);
 		try {
-			phoenix = BuildSource.makePhoenix(source, PrintStreamMessenger.err);
-			mif = new MoteIF(phoenix);
+			commandPhoenix = BuildSource.makePhoenix(source, PrintStreamMessenger.err);
+			errorHandler.setSource(commandPhoenix);
+			commandPhoenix.setPacketErrorHandler(errorHandler);
+			commandMif = new MoteIF(commandPhoenix);
 		} catch (Exception e)
 		{
+			System.out.println("Fatal Error: exiting");
 			return null;
 		}
 		
-		this.moteIF = mif;
+		this.moteIF = commandMif;
 		this.moteIF.registerListener(new SerialMsg(), this);
 		this.moteIF.registerListener(new TableMsg(),this);
 		this.moteIF.registerListener(new SensorMsg(),this);
-
-		return mif;
+		System.out.println("successfully created connections");
+		return commandMif;
 	}
 
 	
