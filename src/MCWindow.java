@@ -48,21 +48,15 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JTextPane;
-import javax.swing.event.PopupMenuListener;
-import javax.swing.event.PopupMenuEvent;
-
 import org.apache.commons.collections15.Transformer;
 
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
-import edu.uci.ics.jung.visualization.transform.*;
 
 
 /**
@@ -91,9 +85,8 @@ public class MCWindow {
 	private JCheckBox checkBoxLED1;
 	private JCheckBox checkBoxLED2;
 	private JCheckBox checkBoxLED3;
-	private JCheckBox checkBoxHumidity;
-	private JCheckBox checkBoxTemperature;
-	private JCheckBox checkBoxLight;
+	private JCheckBox checkBoxReqSensor;
+
 	final static JTextArea textAreaOutput = new JTextArea("", 5, 50);
 	final static JButton buttonSend = new JButton("Send message!");
 
@@ -245,7 +238,7 @@ public class MCWindow {
 		panelCon.add(lblIp, gbc_lblIp);
 
 		textFieldIP = new JTextField();
-		textFieldIP.setText("localhost"); // "137.226.59.149" //dantoine: 137.226.59.146
+		textFieldIP.setText("137.226.59.3"); // "137.226.59.149" //dantoine: 137.226.59.146
 		GridBagConstraints gbc_textFieldIP = new GridBagConstraints();
 		gbc_textFieldIP.insets = new Insets(0, 0, 5, 0);
 		gbc_textFieldIP.fill = GridBagConstraints.BOTH;
@@ -263,7 +256,7 @@ public class MCWindow {
 		panelCon.add(labelPort, gbc_labelPort);
 
 		textFieldPort = new JTextField();
-		textFieldPort.setText("9002");
+		textFieldPort.setText("2004");
 		GridBagConstraints gbc_textFieldPort = new GridBagConstraints();
 		gbc_textFieldPort.fill = GridBagConstraints.BOTH;
 		gbc_textFieldPort.insets = new Insets(0, 0, 5, 0);
@@ -401,7 +394,7 @@ public class MCWindow {
 		gbc_checkBoxLED3.gridy = 0;
 		panelLedCheckBoxes.add(checkBoxLED3, gbc_checkBoxLED3);
 
-		JLabel lblChooseSensors = new JLabel("Choose sensors:");
+		JLabel lblChooseSensors = new JLabel("Request SensorData:");
 		GridBagConstraints gbc_lblChooseSensors = new GridBagConstraints();
 		gbc_lblChooseSensors.anchor = GridBagConstraints.WEST;
 		gbc_lblChooseSensors.fill = GridBagConstraints.VERTICAL;
@@ -428,32 +421,16 @@ public class MCWindow {
 				Double.MIN_VALUE };
 		panelSensorCheckBoxes.setLayout(gbl_panelSensorCheckBoxes);
 
-		checkBoxHumidity = new JCheckBox("Humidity-Sensor ON");
-		checkBoxHumidity.setHorizontalAlignment(SwingConstants.LEFT);
-		GridBagConstraints gbc_checkBoxHumidity = new GridBagConstraints();
-		gbc_checkBoxHumidity.fill = GridBagConstraints.HORIZONTAL;
-		gbc_checkBoxHumidity.insets = new Insets(0, 0, 5, 0);
-		gbc_checkBoxHumidity.gridx = 0;
-		gbc_checkBoxHumidity.gridy = 0;
-		panelSensorCheckBoxes.add(checkBoxHumidity, gbc_checkBoxHumidity);
+		checkBoxReqSensor = new JCheckBox("Send request!");
+		checkBoxReqSensor.setHorizontalAlignment(SwingConstants.LEFT);
+		GridBagConstraints gbc_checkBoxReqSensor = new GridBagConstraints();
+		gbc_checkBoxReqSensor.fill = GridBagConstraints.HORIZONTAL;
+		gbc_checkBoxReqSensor.insets = new Insets(0, 0, 5, 0);
+		gbc_checkBoxReqSensor.gridx = 0;
+		gbc_checkBoxReqSensor.gridy = 0;
+		panelSensorCheckBoxes.add(checkBoxReqSensor, gbc_checkBoxReqSensor);
 
-		checkBoxTemperature = new JCheckBox("Temperature-Sensor ON");
-		checkBoxTemperature.setHorizontalAlignment(SwingConstants.LEFT);
-		GridBagConstraints gbc_checkBoxTemperature = new GridBagConstraints();
-		gbc_checkBoxTemperature.fill = GridBagConstraints.HORIZONTAL;
-		gbc_checkBoxTemperature.insets = new Insets(0, 0, 5, 0);
-		gbc_checkBoxTemperature.gridx = 0;
-		gbc_checkBoxTemperature.gridy = 1;
-		panelSensorCheckBoxes.add(checkBoxTemperature, gbc_checkBoxTemperature);
-
-		checkBoxLight = new JCheckBox("Light-Sensor ON");
-		checkBoxLight.setHorizontalAlignment(SwingConstants.LEFT);
-		GridBagConstraints gbc_checkBoxLight = new GridBagConstraints();
-		gbc_checkBoxLight.fill = GridBagConstraints.HORIZONTAL;
-		gbc_checkBoxLight.gridx = 0;
-		gbc_checkBoxLight.gridy = 2;
-		panelSensorCheckBoxes.add(checkBoxLight, gbc_checkBoxLight);
-
+		
 		GridBagConstraints gbc_button = new GridBagConstraints();
 		gbc_button.fill = GridBagConstraints.BOTH;
 		gbc_button.gridx = 0;
@@ -733,7 +710,7 @@ public class MCWindow {
 				e.printStackTrace();
 			}
 			
-			System.out.println("formattedLast: "+moteTable.getReceiveDate()+" formattedCur: "+dateFormat.format(currentDate));
+			//System.out.println("formattedLast: "+moteTable.getReceiveDate()+" formattedCur: "+dateFormat.format(currentDate));
 			//System.out.println("last table received: "+lastTableReceivedDate.getTime()+" current: "+currentDate.getTime()+" test: "+test.getTime());
 			if(transformedCurrent.getTime() - lastTableReceivedDate.getTime() < 15000)
 			{
@@ -875,20 +852,15 @@ public class MCWindow {
 						ledNumber += 4;
 
 					// check sensors checkboxes
-					short[] sensors = new short[3];
-					for (int i = 0; i < sensors.length; i++) {
-						sensors[i] = 0;
+					short reqSensors = 0;
+					if (checkBoxReqSensor.isSelected()){
+						reqSensors = 1;
 					}
-					if (checkBoxHumidity.isSelected())
-						sensors[0] = 1;
-					if (checkBoxTemperature.isSelected())
-						sensors[1] = 1;
-					if (checkBoxLight.isSelected())
-						sensors[2] = 1;
-
+					
+					
 					// invoke sending of messages
 					sendMessage = new Thread(new SendMessages(mif, seqNumber,
-							ledNumber, receivers, sensors));
+							ledNumber, receivers, reqSensors));
 
 					sendMessage.start();
 

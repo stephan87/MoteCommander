@@ -69,7 +69,7 @@ public class Connection implements MessageListener  {
 		{
 			
 			TableMsg tableMsg = (TableMsg) message;
-			System.out.println("Table of Node: "+tableMsg.get_sender());
+			System.out.println("Table of Node: "+tableMsg.get_sender() + "    chosenParent: "+ tableMsg.get_parent() + "    avgRSSI: "+ tableMsg.get_avgRSSI());
 			MoteTable moteTable = new MoteTable(tableMsg.get_sender(), tableMsg.get_nodeId(), 
 					tableMsg.get_lastContact(),tableMsg.get_parent(), dateFormat.format(date));
 			
@@ -105,7 +105,7 @@ public class Connection implements MessageListener  {
 			ArrayList<SensorData> sensorDataArray = SensorDataManager.getInstance().getSensorData();
 			
 			// check max size
-			if(sensorDataArray.size()<300){
+			if(sensorDataArray.size()<1200){
 				sensorDataArray.add(sensorData);
 			}else{
 				sensorDataArray.clear();
@@ -114,7 +114,7 @@ public class Connection implements MessageListener  {
 			// automatic update of view
 			MCWindow.drawGraph();
 			
-			System.out.println("SensorData from Node: "+sensorMsg.get_sender());
+			System.out.println("SensorData from Node: "+sensorMsg.get_sender() + " Version: "+ sensorMsg.get_version() +" Sensor:" + sensorMsg.get_sensor());
 		}	
 	}
 

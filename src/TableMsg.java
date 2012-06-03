@@ -85,9 +85,6 @@ public class TableMsg extends net.tinyos.message.Message {
     public String toString() {
       String s = "Message <TableMsg> \n";
       try {
-        s += "  [seqNum=0x"+Long.toHexString(get_seqNum())+"]\n";
-      } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
-      try {
         s += "  [sender=0x"+Long.toHexString(get_sender())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
@@ -110,78 +107,18 @@ public class TableMsg extends net.tinyos.message.Message {
       try {
         s += "  [parent=0x"+Long.toHexString(get_parent())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
+      try {
+        s += "  [avgRSSI=0x"+Long.toHexString(get_avgRSSI())+"]\n";
+      } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       return s;
     }
 
     // Message-type-specific access methods appear below.
 
     /////////////////////////////////////////////////////////
-    // Accessor methods for field: seqNum
-    //   Field type: int, unsigned
-    //   Offset (bits): 0
-    //   Size (bits): 16
-    /////////////////////////////////////////////////////////
-
-    /**
-     * Return whether the field 'seqNum' is signed (false).
-     */
-    public static boolean isSigned_seqNum() {
-        return false;
-    }
-
-    /**
-     * Return whether the field 'seqNum' is an array (false).
-     */
-    public static boolean isArray_seqNum() {
-        return false;
-    }
-
-    /**
-     * Return the offset (in bytes) of the field 'seqNum'
-     */
-    public static int offset_seqNum() {
-        return (0 / 8);
-    }
-
-    /**
-     * Return the offset (in bits) of the field 'seqNum'
-     */
-    public static int offsetBits_seqNum() {
-        return 0;
-    }
-
-    /**
-     * Return the value (as a int) of the field 'seqNum'
-     */
-    public int get_seqNum() {
-        return (int)getUIntBEElement(offsetBits_seqNum(), 16);
-    }
-
-    /**
-     * Set the value of the field 'seqNum'
-     */
-    public void set_seqNum(int value) {
-        setUIntBEElement(offsetBits_seqNum(), 16, value);
-    }
-
-    /**
-     * Return the size, in bytes, of the field 'seqNum'
-     */
-    public static int size_seqNum() {
-        return (16 / 8);
-    }
-
-    /**
-     * Return the size, in bits, of the field 'seqNum'
-     */
-    public static int sizeBits_seqNum() {
-        return 16;
-    }
-
-    /////////////////////////////////////////////////////////
     // Accessor methods for field: sender
     //   Field type: int, unsigned
-    //   Offset (bits): 16
+    //   Offset (bits): 0
     //   Size (bits): 16
     /////////////////////////////////////////////////////////
 
@@ -203,14 +140,14 @@ public class TableMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'sender'
      */
     public static int offset_sender() {
-        return (16 / 8);
+        return (0 / 8);
     }
 
     /**
      * Return the offset (in bits) of the field 'sender'
      */
     public static int offsetBits_sender() {
-        return 16;
+        return 0;
     }
 
     /**
@@ -244,7 +181,7 @@ public class TableMsg extends net.tinyos.message.Message {
     /////////////////////////////////////////////////////////
     // Accessor methods for field: receiver
     //   Field type: short, unsigned
-    //   Offset (bits): 32
+    //   Offset (bits): 16
     //   Size (bits): 8
     /////////////////////////////////////////////////////////
 
@@ -266,14 +203,14 @@ public class TableMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'receiver'
      */
     public static int offset_receiver() {
-        return (32 / 8);
+        return (16 / 8);
     }
 
     /**
      * Return the offset (in bits) of the field 'receiver'
      */
     public static int offsetBits_receiver() {
-        return 32;
+        return 16;
     }
 
     /**
@@ -307,7 +244,7 @@ public class TableMsg extends net.tinyos.message.Message {
     /////////////////////////////////////////////////////////
     // Accessor methods for field: nodeId
     //   Field type: int[], unsigned
-    //   Offset (bits): 40
+    //   Offset (bits): 24
     //   Size of each element (bits): 16
     /////////////////////////////////////////////////////////
 
@@ -329,7 +266,7 @@ public class TableMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'nodeId'
      */
     public static int offset_nodeId(int index1) {
-        int offset = 40;
+        int offset = 24;
         if (index1 < 0 || index1 >= 4) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 16;
         return (offset / 8);
@@ -339,7 +276,7 @@ public class TableMsg extends net.tinyos.message.Message {
      * Return the offset (in bits) of the field 'nodeId'
      */
     public static int offsetBits_nodeId(int index1) {
-        int offset = 40;
+        int offset = 24;
         if (index1 < 0 || index1 >= 4) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 16;
         return offset;
@@ -435,7 +372,7 @@ public class TableMsg extends net.tinyos.message.Message {
     /////////////////////////////////////////////////////////
     // Accessor methods for field: lastContact
     //   Field type: int[], unsigned
-    //   Offset (bits): 104
+    //   Offset (bits): 88
     //   Size of each element (bits): 16
     /////////////////////////////////////////////////////////
 
@@ -457,7 +394,7 @@ public class TableMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'lastContact'
      */
     public static int offset_lastContact(int index1) {
-        int offset = 104;
+        int offset = 88;
         if (index1 < 0 || index1 >= 4) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 16;
         return (offset / 8);
@@ -467,7 +404,7 @@ public class TableMsg extends net.tinyos.message.Message {
      * Return the offset (in bits) of the field 'lastContact'
      */
     public static int offsetBits_lastContact(int index1) {
-        int offset = 104;
+        int offset = 88;
         if (index1 < 0 || index1 >= 4) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 16;
         return offset;
@@ -563,7 +500,7 @@ public class TableMsg extends net.tinyos.message.Message {
     /////////////////////////////////////////////////////////
     // Accessor methods for field: parent
     //   Field type: int, unsigned
-    //   Offset (bits): 168
+    //   Offset (bits): 152
     //   Size (bits): 16
     /////////////////////////////////////////////////////////
 
@@ -585,14 +522,14 @@ public class TableMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'parent'
      */
     public static int offset_parent() {
-        return (168 / 8);
+        return (152 / 8);
     }
 
     /**
      * Return the offset (in bits) of the field 'parent'
      */
     public static int offsetBits_parent() {
-        return 168;
+        return 152;
     }
 
     /**
@@ -620,6 +557,69 @@ public class TableMsg extends net.tinyos.message.Message {
      * Return the size, in bits, of the field 'parent'
      */
     public static int sizeBits_parent() {
+        return 16;
+    }
+
+    /////////////////////////////////////////////////////////
+    // Accessor methods for field: avgRSSI
+    //   Field type: int, unsigned
+    //   Offset (bits): 168
+    //   Size (bits): 16
+    /////////////////////////////////////////////////////////
+
+    /**
+     * Return whether the field 'avgRSSI' is signed (false).
+     */
+    public static boolean isSigned_avgRSSI() {
+        return false;
+    }
+
+    /**
+     * Return whether the field 'avgRSSI' is an array (false).
+     */
+    public static boolean isArray_avgRSSI() {
+        return false;
+    }
+
+    /**
+     * Return the offset (in bytes) of the field 'avgRSSI'
+     */
+    public static int offset_avgRSSI() {
+        return (168 / 8);
+    }
+
+    /**
+     * Return the offset (in bits) of the field 'avgRSSI'
+     */
+    public static int offsetBits_avgRSSI() {
+        return 168;
+    }
+
+    /**
+     * Return the value (as a int) of the field 'avgRSSI'
+     */
+    public int get_avgRSSI() {
+        return (int)getUIntBEElement(offsetBits_avgRSSI(), 16);
+    }
+
+    /**
+     * Set the value of the field 'avgRSSI'
+     */
+    public void set_avgRSSI(int value) {
+        setUIntBEElement(offsetBits_avgRSSI(), 16, value);
+    }
+
+    /**
+     * Return the size, in bytes, of the field 'avgRSSI'
+     */
+    public static int size_avgRSSI() {
+        return (16 / 8);
+    }
+
+    /**
+     * Return the size, in bits, of the field 'avgRSSI'
+     */
+    public static int sizeBits_avgRSSI() {
         return 16;
     }
 

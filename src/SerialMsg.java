@@ -7,12 +7,12 @@
 public class SerialMsg extends net.tinyos.message.Message {
 
     /** The default size of this message type in bytes. */
-    public static final int DEFAULT_MESSAGE_SIZE = 12;
+    public static final int DEFAULT_MESSAGE_SIZE = 10;
 
     /** The Active Message type associated with this message. */
     public static final int AM_TYPE = 6;
 
-    /** Create a new SerialMsg of size 12. */
+    /** Create a new SerialMsg of size 10. */
     public SerialMsg() {
         super(DEFAULT_MESSAGE_SIZE);
         amTypeSet(AM_TYPE);
@@ -97,11 +97,7 @@ public class SerialMsg extends net.tinyos.message.Message {
         s += "  [receiver=0x"+Long.toHexString(get_receiver())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
-        s += "  [sensor=";
-        for (int i = 0; i < 3; i++) {
-          s += "0x"+Long.toHexString(getElement_sensor(i) & 0xff)+" ";
-        }
-        s += "]\n";
+        s += "  [reqSensor=0x"+Long.toHexString(get_reqSensor())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
         s += "  [isAck=0x"+Long.toHexString(get_isAck())+"]\n";
@@ -364,162 +360,72 @@ public class SerialMsg extends net.tinyos.message.Message {
     }
 
     /////////////////////////////////////////////////////////
-    // Accessor methods for field: sensor
-    //   Field type: short[], unsigned
+    // Accessor methods for field: reqSensor
+    //   Field type: short, unsigned
     //   Offset (bits): 64
-    //   Size of each element (bits): 8
+    //   Size (bits): 8
     /////////////////////////////////////////////////////////
 
     /**
-     * Return whether the field 'sensor' is signed (false).
+     * Return whether the field 'reqSensor' is signed (false).
      */
-    public static boolean isSigned_sensor() {
+    public static boolean isSigned_reqSensor() {
         return false;
     }
 
     /**
-     * Return whether the field 'sensor' is an array (true).
+     * Return whether the field 'reqSensor' is an array (false).
      */
-    public static boolean isArray_sensor() {
-        return true;
+    public static boolean isArray_reqSensor() {
+        return false;
     }
 
     /**
-     * Return the offset (in bytes) of the field 'sensor'
+     * Return the offset (in bytes) of the field 'reqSensor'
      */
-    public static int offset_sensor(int index1) {
-        int offset = 64;
-        if (index1 < 0 || index1 >= 3) throw new ArrayIndexOutOfBoundsException();
-        offset += 0 + index1 * 8;
-        return (offset / 8);
+    public static int offset_reqSensor() {
+        return (64 / 8);
     }
 
     /**
-     * Return the offset (in bits) of the field 'sensor'
+     * Return the offset (in bits) of the field 'reqSensor'
      */
-    public static int offsetBits_sensor(int index1) {
-        int offset = 64;
-        if (index1 < 0 || index1 >= 3) throw new ArrayIndexOutOfBoundsException();
-        offset += 0 + index1 * 8;
-        return offset;
+    public static int offsetBits_reqSensor() {
+        return 64;
     }
 
     /**
-     * Return the entire array 'sensor' as a short[]
+     * Return the value (as a short) of the field 'reqSensor'
      */
-    public short[] get_sensor() {
-        short[] tmp = new short[3];
-        for (int index0 = 0; index0 < numElements_sensor(0); index0++) {
-            tmp[index0] = getElement_sensor(index0);
-        }
-        return tmp;
+    public short get_reqSensor() {
+        return (short)getUIntBEElement(offsetBits_reqSensor(), 8);
     }
 
     /**
-     * Set the contents of the array 'sensor' from the given short[]
+     * Set the value of the field 'reqSensor'
      */
-    public void set_sensor(short[] value) {
-        for (int index0 = 0; index0 < value.length; index0++) {
-            setElement_sensor(index0, value[index0]);
-        }
+    public void set_reqSensor(short value) {
+        setUIntBEElement(offsetBits_reqSensor(), 8, value);
     }
 
     /**
-     * Return an element (as a short) of the array 'sensor'
+     * Return the size, in bytes, of the field 'reqSensor'
      */
-    public short getElement_sensor(int index1) {
-        return (short)getUIntBEElement(offsetBits_sensor(index1), 8);
-    }
-
-    /**
-     * Set an element of the array 'sensor'
-     */
-    public void setElement_sensor(int index1, short value) {
-        setUIntBEElement(offsetBits_sensor(index1), 8, value);
-    }
-
-    /**
-     * Return the total size, in bytes, of the array 'sensor'
-     */
-    public static int totalSize_sensor() {
-        return (24 / 8);
-    }
-
-    /**
-     * Return the total size, in bits, of the array 'sensor'
-     */
-    public static int totalSizeBits_sensor() {
-        return 24;
-    }
-
-    /**
-     * Return the size, in bytes, of each element of the array 'sensor'
-     */
-    public static int elementSize_sensor() {
+    public static int size_reqSensor() {
         return (8 / 8);
     }
 
     /**
-     * Return the size, in bits, of each element of the array 'sensor'
+     * Return the size, in bits, of the field 'reqSensor'
      */
-    public static int elementSizeBits_sensor() {
+    public static int sizeBits_reqSensor() {
         return 8;
-    }
-
-    /**
-     * Return the number of dimensions in the array 'sensor'
-     */
-    public static int numDimensions_sensor() {
-        return 1;
-    }
-
-    /**
-     * Return the number of elements in the array 'sensor'
-     */
-    public static int numElements_sensor() {
-        return 3;
-    }
-
-    /**
-     * Return the number of elements in the array 'sensor'
-     * for the given dimension.
-     */
-    public static int numElements_sensor(int dimension) {
-      int array_dims[] = { 3,  };
-        if (dimension < 0 || dimension >= 1) throw new ArrayIndexOutOfBoundsException();
-        if (array_dims[dimension] == 0) throw new IllegalArgumentException("Array dimension "+dimension+" has unknown size");
-        return array_dims[dimension];
-    }
-
-    /**
-     * Fill in the array 'sensor' with a String
-     */
-    public void setString_sensor(String s) { 
-         int len = s.length();
-         int i;
-         for (i = 0; i < len; i++) {
-             setElement_sensor(i, (short)s.charAt(i));
-         }
-         setElement_sensor(i, (short)0); //null terminate
-    }
-
-    /**
-     * Read the array 'sensor' as a String
-     */
-    public String getString_sensor() { 
-         char carr[] = new char[Math.min(net.tinyos.message.Message.MAX_CONVERTED_STRING_LENGTH,3)];
-         int i;
-         for (i = 0; i < carr.length; i++) {
-             if ((char)getElement_sensor(i) == (char)0) break;
-             carr[i] = (char)getElement_sensor(i);
-         }
-         return new String(carr,0,i);
     }
 
     /////////////////////////////////////////////////////////
     // Accessor methods for field: isAck
     //   Field type: short, unsigned
-    //   Offset (bits): 88
+    //   Offset (bits): 72
     //   Size (bits): 8
     /////////////////////////////////////////////////////////
 
@@ -541,14 +447,14 @@ public class SerialMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'isAck'
      */
     public static int offset_isAck() {
-        return (88 / 8);
+        return (72 / 8);
     }
 
     /**
      * Return the offset (in bits) of the field 'isAck'
      */
     public static int offsetBits_isAck() {
-        return 88;
+        return 72;
     }
 
     /**

@@ -10,7 +10,7 @@ public class SendMessages implements Runnable {
 	private int ledNumber;
 	private int seqnumber;
 	private int[] receivers;
-	private short[] sensors;
+	private short reqSensors;
 	private short isAck;
 
 	@SuppressWarnings("unused")
@@ -18,12 +18,12 @@ public class SendMessages implements Runnable {
 
 	}
 
-	public SendMessages(MoteIF moteIF, int seqnumber, int ledNumber, int[] receivers, short[] sensors) {
+	public SendMessages(MoteIF moteIF, int seqnumber, int ledNumber, int[] receivers, short reqSensors) {
 		this.moteIF = moteIF;
 		this.seqnumber = seqnumber;
 		this.ledNumber = ledNumber;
 		this.receivers = receivers;
-		this.sensors = sensors;
+		this.reqSensors = reqSensors;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -40,7 +40,7 @@ public class SendMessages implements Runnable {
 					payload.set_sender(99);
 					payload.set_seqNum(seqnumber++);
 					payload.set_ledNum(ledNumber);
-					payload.set_sensor(sensors);
+					payload.set_reqSensor(reqSensors);
 					MCWindow.textAreaOutput.setText("Forward message to mote \"0\" with receiver "
 					+ receivers[i] +"!\n"+ MCWindow.textAreaOutput.getText());
 					moteIF.send(0, payload);

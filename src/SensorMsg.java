@@ -7,12 +7,12 @@
 public class SensorMsg extends net.tinyos.message.Message {
 
     /** The default size of this message type in bytes. */
-    public static final int DEFAULT_MESSAGE_SIZE = 23;
+    public static final int DEFAULT_MESSAGE_SIZE = 17;
 
     /** The Active Message type associated with this message. */
     public static final int AM_TYPE = 4;
 
-    /** Create a new SensorMsg of size 23. */
+    /** Create a new SensorMsg of size 17. */
     public SensorMsg() {
         super(DEFAULT_MESSAGE_SIZE);
         amTypeSet(AM_TYPE);
@@ -85,25 +85,16 @@ public class SensorMsg extends net.tinyos.message.Message {
     public String toString() {
       String s = "Message <SensorMsg> \n";
       try {
-        s += "  [version=0x"+Long.toHexString(get_version())+"]\n";
-      } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
-      try {
         s += "  [receiver=0x"+Long.toHexString(get_receiver())+"]\n";
-      } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
-      try {
-        s += "  [sensor=0x"+Long.toHexString(get_sensor())+"]\n";
-      } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
-      try {
-        s += "  [interval=0x"+Long.toHexString(get_interval())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
         s += "  [sender=0x"+Long.toHexString(get_sender())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
-        s += "  [seqNum=0x"+Long.toHexString(get_seqNum())+"]\n";
+        s += "  [sensor=0x"+Long.toHexString(get_sensor())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
-        s += "  [count=0x"+Long.toHexString(get_count())+"]\n";
+        s += "  [version=0x"+Long.toHexString(get_version())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
         s += "  [readings=";
@@ -118,72 +109,9 @@ public class SensorMsg extends net.tinyos.message.Message {
     // Message-type-specific access methods appear below.
 
     /////////////////////////////////////////////////////////
-    // Accessor methods for field: version
-    //   Field type: int, unsigned
-    //   Offset (bits): 0
-    //   Size (bits): 16
-    /////////////////////////////////////////////////////////
-
-    /**
-     * Return whether the field 'version' is signed (false).
-     */
-    public static boolean isSigned_version() {
-        return false;
-    }
-
-    /**
-     * Return whether the field 'version' is an array (false).
-     */
-    public static boolean isArray_version() {
-        return false;
-    }
-
-    /**
-     * Return the offset (in bytes) of the field 'version'
-     */
-    public static int offset_version() {
-        return (0 / 8);
-    }
-
-    /**
-     * Return the offset (in bits) of the field 'version'
-     */
-    public static int offsetBits_version() {
-        return 0;
-    }
-
-    /**
-     * Return the value (as a int) of the field 'version'
-     */
-    public int get_version() {
-        return (int)getUIntBEElement(offsetBits_version(), 16);
-    }
-
-    /**
-     * Set the value of the field 'version'
-     */
-    public void set_version(int value) {
-        setUIntBEElement(offsetBits_version(), 16, value);
-    }
-
-    /**
-     * Return the size, in bytes, of the field 'version'
-     */
-    public static int size_version() {
-        return (16 / 8);
-    }
-
-    /**
-     * Return the size, in bits, of the field 'version'
-     */
-    public static int sizeBits_version() {
-        return 16;
-    }
-
-    /////////////////////////////////////////////////////////
     // Accessor methods for field: receiver
     //   Field type: int, unsigned
-    //   Offset (bits): 16
+    //   Offset (bits): 0
     //   Size (bits): 16
     /////////////////////////////////////////////////////////
 
@@ -205,14 +133,14 @@ public class SensorMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'receiver'
      */
     public static int offset_receiver() {
-        return (16 / 8);
+        return (0 / 8);
     }
 
     /**
      * Return the offset (in bits) of the field 'receiver'
      */
     public static int offsetBits_receiver() {
-        return 16;
+        return 0;
     }
 
     /**
@@ -240,6 +168,69 @@ public class SensorMsg extends net.tinyos.message.Message {
      * Return the size, in bits, of the field 'receiver'
      */
     public static int sizeBits_receiver() {
+        return 16;
+    }
+
+    /////////////////////////////////////////////////////////
+    // Accessor methods for field: sender
+    //   Field type: int, unsigned
+    //   Offset (bits): 16
+    //   Size (bits): 16
+    /////////////////////////////////////////////////////////
+
+    /**
+     * Return whether the field 'sender' is signed (false).
+     */
+    public static boolean isSigned_sender() {
+        return false;
+    }
+
+    /**
+     * Return whether the field 'sender' is an array (false).
+     */
+    public static boolean isArray_sender() {
+        return false;
+    }
+
+    /**
+     * Return the offset (in bytes) of the field 'sender'
+     */
+    public static int offset_sender() {
+        return (16 / 8);
+    }
+
+    /**
+     * Return the offset (in bits) of the field 'sender'
+     */
+    public static int offsetBits_sender() {
+        return 16;
+    }
+
+    /**
+     * Return the value (as a int) of the field 'sender'
+     */
+    public int get_sender() {
+        return (int)getUIntBEElement(offsetBits_sender(), 16);
+    }
+
+    /**
+     * Set the value of the field 'sender'
+     */
+    public void set_sender(int value) {
+        setUIntBEElement(offsetBits_sender(), 16, value);
+    }
+
+    /**
+     * Return the size, in bytes, of the field 'sender'
+     */
+    public static int size_sender() {
+        return (16 / 8);
+    }
+
+    /**
+     * Return the size, in bits, of the field 'sender'
+     */
+    public static int sizeBits_sender() {
         return 16;
     }
 
@@ -307,261 +298,72 @@ public class SensorMsg extends net.tinyos.message.Message {
     }
 
     /////////////////////////////////////////////////////////
-    // Accessor methods for field: interval
+    // Accessor methods for field: version
     //   Field type: int, unsigned
     //   Offset (bits): 40
     //   Size (bits): 16
     /////////////////////////////////////////////////////////
 
     /**
-     * Return whether the field 'interval' is signed (false).
+     * Return whether the field 'version' is signed (false).
      */
-    public static boolean isSigned_interval() {
+    public static boolean isSigned_version() {
         return false;
     }
 
     /**
-     * Return whether the field 'interval' is an array (false).
+     * Return whether the field 'version' is an array (false).
      */
-    public static boolean isArray_interval() {
+    public static boolean isArray_version() {
         return false;
     }
 
     /**
-     * Return the offset (in bytes) of the field 'interval'
+     * Return the offset (in bytes) of the field 'version'
      */
-    public static int offset_interval() {
+    public static int offset_version() {
         return (40 / 8);
     }
 
     /**
-     * Return the offset (in bits) of the field 'interval'
+     * Return the offset (in bits) of the field 'version'
      */
-    public static int offsetBits_interval() {
+    public static int offsetBits_version() {
         return 40;
     }
 
     /**
-     * Return the value (as a int) of the field 'interval'
+     * Return the value (as a int) of the field 'version'
      */
-    public int get_interval() {
-        return (int)getUIntBEElement(offsetBits_interval(), 16);
+    public int get_version() {
+        return (int)getUIntBEElement(offsetBits_version(), 16);
     }
 
     /**
-     * Set the value of the field 'interval'
+     * Set the value of the field 'version'
      */
-    public void set_interval(int value) {
-        setUIntBEElement(offsetBits_interval(), 16, value);
+    public void set_version(int value) {
+        setUIntBEElement(offsetBits_version(), 16, value);
     }
 
     /**
-     * Return the size, in bytes, of the field 'interval'
+     * Return the size, in bytes, of the field 'version'
      */
-    public static int size_interval() {
+    public static int size_version() {
         return (16 / 8);
     }
 
     /**
-     * Return the size, in bits, of the field 'interval'
+     * Return the size, in bits, of the field 'version'
      */
-    public static int sizeBits_interval() {
-        return 16;
-    }
-
-    /////////////////////////////////////////////////////////
-    // Accessor methods for field: sender
-    //   Field type: int, unsigned
-    //   Offset (bits): 56
-    //   Size (bits): 16
-    /////////////////////////////////////////////////////////
-
-    /**
-     * Return whether the field 'sender' is signed (false).
-     */
-    public static boolean isSigned_sender() {
-        return false;
-    }
-
-    /**
-     * Return whether the field 'sender' is an array (false).
-     */
-    public static boolean isArray_sender() {
-        return false;
-    }
-
-    /**
-     * Return the offset (in bytes) of the field 'sender'
-     */
-    public static int offset_sender() {
-        return (56 / 8);
-    }
-
-    /**
-     * Return the offset (in bits) of the field 'sender'
-     */
-    public static int offsetBits_sender() {
-        return 56;
-    }
-
-    /**
-     * Return the value (as a int) of the field 'sender'
-     */
-    public int get_sender() {
-        return (int)getUIntBEElement(offsetBits_sender(), 16);
-    }
-
-    /**
-     * Set the value of the field 'sender'
-     */
-    public void set_sender(int value) {
-        setUIntBEElement(offsetBits_sender(), 16, value);
-    }
-
-    /**
-     * Return the size, in bytes, of the field 'sender'
-     */
-    public static int size_sender() {
-        return (16 / 8);
-    }
-
-    /**
-     * Return the size, in bits, of the field 'sender'
-     */
-    public static int sizeBits_sender() {
-        return 16;
-    }
-
-    /////////////////////////////////////////////////////////
-    // Accessor methods for field: seqNum
-    //   Field type: int, unsigned
-    //   Offset (bits): 72
-    //   Size (bits): 16
-    /////////////////////////////////////////////////////////
-
-    /**
-     * Return whether the field 'seqNum' is signed (false).
-     */
-    public static boolean isSigned_seqNum() {
-        return false;
-    }
-
-    /**
-     * Return whether the field 'seqNum' is an array (false).
-     */
-    public static boolean isArray_seqNum() {
-        return false;
-    }
-
-    /**
-     * Return the offset (in bytes) of the field 'seqNum'
-     */
-    public static int offset_seqNum() {
-        return (72 / 8);
-    }
-
-    /**
-     * Return the offset (in bits) of the field 'seqNum'
-     */
-    public static int offsetBits_seqNum() {
-        return 72;
-    }
-
-    /**
-     * Return the value (as a int) of the field 'seqNum'
-     */
-    public int get_seqNum() {
-        return (int)getUIntBEElement(offsetBits_seqNum(), 16);
-    }
-
-    /**
-     * Set the value of the field 'seqNum'
-     */
-    public void set_seqNum(int value) {
-        setUIntBEElement(offsetBits_seqNum(), 16, value);
-    }
-
-    /**
-     * Return the size, in bytes, of the field 'seqNum'
-     */
-    public static int size_seqNum() {
-        return (16 / 8);
-    }
-
-    /**
-     * Return the size, in bits, of the field 'seqNum'
-     */
-    public static int sizeBits_seqNum() {
-        return 16;
-    }
-
-    /////////////////////////////////////////////////////////
-    // Accessor methods for field: count
-    //   Field type: int, unsigned
-    //   Offset (bits): 88
-    //   Size (bits): 16
-    /////////////////////////////////////////////////////////
-
-    /**
-     * Return whether the field 'count' is signed (false).
-     */
-    public static boolean isSigned_count() {
-        return false;
-    }
-
-    /**
-     * Return whether the field 'count' is an array (false).
-     */
-    public static boolean isArray_count() {
-        return false;
-    }
-
-    /**
-     * Return the offset (in bytes) of the field 'count'
-     */
-    public static int offset_count() {
-        return (88 / 8);
-    }
-
-    /**
-     * Return the offset (in bits) of the field 'count'
-     */
-    public static int offsetBits_count() {
-        return 88;
-    }
-
-    /**
-     * Return the value (as a int) of the field 'count'
-     */
-    public int get_count() {
-        return (int)getUIntBEElement(offsetBits_count(), 16);
-    }
-
-    /**
-     * Set the value of the field 'count'
-     */
-    public void set_count(int value) {
-        setUIntBEElement(offsetBits_count(), 16, value);
-    }
-
-    /**
-     * Return the size, in bytes, of the field 'count'
-     */
-    public static int size_count() {
-        return (16 / 8);
-    }
-
-    /**
-     * Return the size, in bits, of the field 'count'
-     */
-    public static int sizeBits_count() {
+    public static int sizeBits_version() {
         return 16;
     }
 
     /////////////////////////////////////////////////////////
     // Accessor methods for field: readings
     //   Field type: int[], unsigned
-    //   Offset (bits): 104
+    //   Offset (bits): 56
     //   Size of each element (bits): 16
     /////////////////////////////////////////////////////////
 
@@ -583,7 +385,7 @@ public class SensorMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'readings'
      */
     public static int offset_readings(int index1) {
-        int offset = 104;
+        int offset = 56;
         if (index1 < 0 || index1 >= 5) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 16;
         return (offset / 8);
@@ -593,7 +395,7 @@ public class SensorMsg extends net.tinyos.message.Message {
      * Return the offset (in bits) of the field 'readings'
      */
     public static int offsetBits_readings(int index1) {
-        int offset = 104;
+        int offset = 56;
         if (index1 < 0 || index1 >= 5) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 16;
         return offset;

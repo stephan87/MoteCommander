@@ -3,6 +3,8 @@ all: MCWindow.class
 MCWindow.class: SerialMsg.java TableMsg.java SensorMsg.java $(wildcard *.java)
 	javac -cp $(CLASSPATH):/media/windows7share/jung/* -target 1.5 -source 1.5 *.java
 
+
+  
 SerialMsg.java:
 	mig java -target=null $(CFLAGS) -java-classname=SerialMsg TestSerial.h CommandMsg -o $@
 
