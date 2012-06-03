@@ -27,6 +27,8 @@ public class Connection implements MessageListener  {
 	public static SerialMsg payload = null;
 	public static boolean resume = false;
 	private PhoenixSource phoenixSource;
+	private int lastVersion = 0;
+	private int lastSender = 0;
 
 	/*
 	 * (non-Javadoc)
@@ -99,6 +101,9 @@ public class Connection implements MessageListener  {
 		{
 			SensorMsg sensorMsg = (SensorMsg) message;
 			
+			lastSender = sensorMsg.get_sender();
+			lastVersion = sensorMsg.get_version();
+			
 			SensorData sensorData = new SensorData(sensorMsg.get_sender(), sensorMsg.get_sensor(),
 					sensorMsg.get_readings(), dateFormat.format(date));
 			
@@ -110,6 +115,16 @@ public class Connection implements MessageListener  {
 			}else{
 				sensorDataArray.clear();
 			}
+			
+			// show new version by adding dummy
+			/*int[] dummyData = new int[(sensorMsg.get_readings().length)];
+			for(int j = 0;j<dummyData.length;j++){
+				dummyData[j] = 0;
+			}
+			SensorData sensorDataDummy = new SensorData(sensorMsg.get_sender(), sensorMsg.get_sensor(),
+					dummyData , dateFormat.format(date));
+			sensorDataArray.add(sensorDataDummy);*/
+			
 			
 			// automatic update of view
 			MCWindow.drawGraph();

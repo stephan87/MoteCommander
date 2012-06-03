@@ -54,7 +54,7 @@ public class SendMessages implements Runnable {
 					System.out.println("supsend");
 					
 					// sleep until ack received
-					MCWindow.sendMessage.sleep(2000);
+					MCWindow.sendMessage.sleep(500);
 					if(Connection.resume == false){
 						MCWindow.textAreaOutput.setText("Retransmitting message!\n" + MCWindow.textAreaOutput.getText());
 					}
