@@ -5,10 +5,10 @@
 #define SIMULATION2
 #ifdef SIMULATION
 #define GETTIME time(NULL)
-#define GETRSSI (55) / (msgReceived->hops + 1)
+#define GETRSSI (100) 
 #else
-#define GETTIME call LocalTime.get()
-#define GETRSSI call CC2420Packet.getRssi(msg)
+#define GETTIME call LocalTime.get() 
+#define GETRSSI call CC2420Packet.getLqi(msg)
 #endif
 
 
@@ -27,7 +27,7 @@ enum {
   SERIAL_ADDR				= 99, 		// serial address
   UNDEFINED					= 0xFFFF,
   ACK_RETRANSMIT_TIMEOUT	= 1000,
-  READLOG_INTERVAL 			= 50,		// read from log every milliseconds 
+  READLOG_INTERVAL 			= 100,		// read from log every milliseconds 
   CONFIG_ADDR 				= 0,
   CONFIG_STATE_INIT			= 0,
   CONFIG_STATE_WRITING  	= 1,
@@ -35,7 +35,8 @@ enum {
   SENSOR_HUMIDITY			= 1, 		
   SENSOR_TEMPERATURE		= 2, 
   SENSOR_LIGHT				= 3,
-  TABLE_MSG_INTERVAL 		= 6000 	
+  TABLE_MSG_INTERVAL 		= 6000, 
+  FLASH_VERSION				= 6
 };
 
 typedef nx_struct CommandMsg {
@@ -51,7 +52,7 @@ typedef nx_struct BeaconMsg {
   nx_uint16_t sender;
   nx_uint16_t parent;		// chosen parent
   nx_uint16_t hops;			// hop count to mote 0
-  nx_uint16_t avgRSSI;		// average RSSI
+  nx_uint16_t avgLqi;		// average RSSI
   nx_uint16_t version;		// avoid loops, update if connection is lost and then broadcast updated version
 } BeaconMsg;
 
@@ -61,7 +62,7 @@ typedef struct MoteTableEntry {
   uint16_t lastContact;
   bool expired;
   uint16_t hops;			// hop count to mote 0
-  uint16_t avgRSSI;			// average RSSI
+  uint16_t avgLqi;			// average Lqi
   uint16_t parentMote;		// chosen parent mote of neighbor
   bool childMote;			// child of current mote; forward msg only if child == true
 } MoteTableEntry;
@@ -80,7 +81,7 @@ typedef nx_struct TableMsg {
   nx_uint16_t nodeId[AM_TABLESIZE];
   nx_uint16_t lastContact[AM_TABLESIZE]; 
   nx_uint16_t parent; 		// chosen parent mote of sender
-  nx_uint16_t avgRSSI;
+  nx_uint16_t avgLqi;
 } TableMsg;
 
 typedef struct QueueInfo{
@@ -90,7 +91,8 @@ typedef struct QueueInfo{
 
 typedef struct config_t {
 	uint8_t  state;         // state of the storage: no data/init, writing, reading  	
-	uint16_t version;		// count of restarts				
+	uint16_t version;		// count of restarts
+	uint8_t flashVersion;	// to delete conf			
 } config_t;
 
 

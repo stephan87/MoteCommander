@@ -86,6 +86,7 @@ public class MCWindow {
 	private JCheckBox checkBoxLED2;
 	private JCheckBox checkBoxLED3;
 	private JCheckBox checkBoxReqSensor;
+	private JCheckBox chckbxEraseLog;
 
 	final static JTextArea textAreaOutput = new JTextArea("", 5, 50);
 	final static JButton buttonSend = new JButton("Send message!");
@@ -154,7 +155,7 @@ public class MCWindow {
 	private void initialize() {
 		frmMotecommander = new JFrame();
 		frmMotecommander.setTitle("MoteCommander");
-		frmMotecommander.setBounds(100, 100, 855, 748);
+		frmMotecommander.setBounds(100, 100, 1200, 748);
 		frmMotecommander.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// **************************** Left side ************************
@@ -223,9 +224,9 @@ public class MCWindow {
 				10, 10, 10)));
 		GridBagLayout gbl_panelCon = new GridBagLayout();
 		gbl_panelCon.columnWidths = new int[] { 33, 0, 0 };
-		gbl_panelCon.rowHeights = new int[] { 20, 0, 0, 0 };
+		gbl_panelCon.rowHeights = new int[] { 20, 0, 0, 0, 0 };
 		gbl_panelCon.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gbl_panelCon.rowWeights = new double[] { 1.0, 1.0, 0.0,
+		gbl_panelCon.rowWeights = new double[] { 1.0, 1.0, 1.0, 0.0,
 				Double.MIN_VALUE };
 		panelCon.setLayout(gbl_panelCon);
 
@@ -265,24 +266,53 @@ public class MCWindow {
 		panelCon.add(textFieldPort, gbc_textFieldPort);
 		textFieldPort.setColumns(10);
 		
+		JLabel lblPortRange = new JLabel("Port Range:");
+		GridBagConstraints gbc_lblPortRange = new GridBagConstraints();
+		gbc_lblPortRange.insets = new Insets(0, 0, 5, 5);
+		gbc_lblPortRange.gridx = 0;
+		gbc_lblPortRange.gridy = 2;
+		panelCon.add(lblPortRange, gbc_lblPortRange);
+		
+		JPanel panel = new JPanel();
+		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.insets = new Insets(0, 0, 5, 0);
+		gbc_panel.fill = GridBagConstraints.BOTH;
+		gbc_panel.gridx = 1;
+		gbc_panel.gridy = 2;
+		panelCon.add(panel, gbc_panel);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[]{48, 48, 0, 0};
+		gbl_panel.rowHeights = new int[]{19, 0};
+		gbl_panel.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		panel.setLayout(gbl_panel);
+		
 		textFieldPortListenStart = new JTextField();
-		textFieldPortListenStart.setText("9002");
 		GridBagConstraints gbc_textFieldPortListenStart = new GridBagConstraints();
-		gbc_textFieldPortListenStart.fill = GridBagConstraints.WEST;
-		gbc_textFieldPortListenStart.insets = new Insets(0, 0, 5, 0);
+		gbc_textFieldPortListenStart.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textFieldPortListenStart.anchor = GridBagConstraints.NORTH;
+		gbc_textFieldPortListenStart.insets = new Insets(0, 0, 0, 5);
 		gbc_textFieldPortListenStart.gridx = 0;
-		gbc_textFieldPortListenStart.gridy = 2;
-		panelCon.add(textFieldPortListenStart, gbc_textFieldPortListenStart);
+		gbc_textFieldPortListenStart.gridy = 0;
+		panel.add(textFieldPortListenStart, gbc_textFieldPortListenStart);
+		textFieldPortListenStart.setText("9002");
 		textFieldPortListenStart.setColumns(4);
 		
+		JLabel label = new JLabel(":");
+		GridBagConstraints gbc_label = new GridBagConstraints();
+		gbc_label.insets = new Insets(0, 0, 0, 5);
+		gbc_label.gridx = 1;
+		gbc_label.gridy = 0;
+		panel.add(label, gbc_label);
+		
 		textFieldPortListenEnd = new JTextField();
-		textFieldPortListenEnd.setText("9002");
 		GridBagConstraints gbc_textFieldPortListenEnd = new GridBagConstraints();
-		gbc_textFieldPortListenEnd.fill = GridBagConstraints.WEST;
-		gbc_textFieldPortListenEnd.insets = new Insets(0, 20, 5, 0);
-		gbc_textFieldPortListenEnd.gridx = 1;
-		gbc_textFieldPortListenEnd.gridy = 2;
-		panelCon.add(textFieldPortListenEnd, gbc_textFieldPortListenEnd);
+		gbc_textFieldPortListenEnd.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textFieldPortListenEnd.anchor = GridBagConstraints.NORTH;
+		gbc_textFieldPortListenEnd.gridx = 2;
+		gbc_textFieldPortListenEnd.gridy = 0;
+		panel.add(textFieldPortListenEnd, gbc_textFieldPortListenEnd);
+		textFieldPortListenEnd.setText("9002");
 		textFieldPortListenEnd.setColumns(4);
 
 		buttonConnect = new JButton("Connect!");
@@ -290,7 +320,7 @@ public class MCWindow {
 		GridBagConstraints gbc_buttonConnect = new GridBagConstraints();
 		gbc_buttonConnect.fill = GridBagConstraints.HORIZONTAL;
 		gbc_buttonConnect.gridx = 1;
-		gbc_buttonConnect.gridy = 3;
+		gbc_buttonConnect.gridy = 4;
 		panelCon.add(buttonConnect, gbc_buttonConnect);
 		buttonConnect.addMouseListener(new MouseAdapter() {
 			@Override
@@ -429,6 +459,23 @@ public class MCWindow {
 		gbc_checkBoxReqSensor.gridx = 0;
 		gbc_checkBoxReqSensor.gridy = 0;
 		panelSensorCheckBoxes.add(checkBoxReqSensor, gbc_checkBoxReqSensor);
+		
+		chckbxEraseLog = new JCheckBox("Erase LOG!");
+		chckbxEraseLog.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(chckbxEraseLog.isSelected() == true)
+				{
+					checkBoxReqSensor.setSelected(false);
+				}
+			}
+		});
+		GridBagConstraints gbc_chckbxEraseLog = new GridBagConstraints();
+		gbc_chckbxEraseLog.anchor = GridBagConstraints.WEST;
+		gbc_chckbxEraseLog.insets = new Insets(0, 0, 5, 0);
+		gbc_chckbxEraseLog.gridx = 0;
+		gbc_chckbxEraseLog.gridy = 1;
+		panelSensorCheckBoxes.add(chckbxEraseLog, gbc_chckbxEraseLog);
 
 		
 		GridBagConstraints gbc_button = new GridBagConstraints();
@@ -621,10 +668,9 @@ public class MCWindow {
 	 */
 	public static void drawGraph() {
 
-		List<Integer> dataList = new ArrayList<Integer>();
+		List<DataPoint> dataList = new ArrayList<DataPoint>();
 
-		ArrayList<SensorData> allData = SensorDataManager.getInstance()
-				.getSensorData();
+		ArrayList<SensorData> allData = SensorDataManager.getInstance().getSensorData();
 
 		int chosenMote = comboBoxSensorMote.getSelectedIndex();
 		int chosenSensor = comboBoxSensor.getSelectedIndex() + 1;
@@ -643,38 +689,48 @@ public class MCWindow {
 		// put all data together to a big list
 		for (Iterator<SensorData> iter = sensorDataByMoteAndSensor.iterator(); iter
 				.hasNext();) {
-			currentReadings = iter.next().getReadings();
+			SensorData currentSensorData = iter.next();
+			currentReadings = currentSensorData.getReadings();
 			for (int i = 0; i < currentReadings.length; i++) {
-				dataList.add(currentReadings[i]);
+				DataPoint newDataPoint = new DataPoint();
+				newDataPoint.setValue(currentReadings[i]);
+				if(currentSensorData.isVersionChanged())
+					System.out.println("############ isafadgaeghe");
+				newDataPoint.setVersionChanged(currentSensorData.isVersionChanged());
+				dataList.add(newDataPoint);
 			}
 		}
 
 		// recalc sensordata to real values
 		Integer realValue = 0;
-		Integer currentInt;
-		List<Integer> realValueList = new ArrayList<Integer>();
-		for (Iterator<Integer> iter = dataList.iterator(); iter.hasNext();) {
-			currentInt = iter.next();
+		DataPoint currentDataPoint;
+		List<DataPoint> realValueList = new ArrayList<DataPoint>();
+		for (Iterator<DataPoint> iter = dataList.iterator(); iter.hasNext();) {
+			currentDataPoint = iter.next();
+			if(currentDataPoint.isVersionChanged())
+				System.out.println("######### isVersionChanged");
 
 			if (chosenSensor == 1) {
 				// Humidity
-				realValue = Integer.valueOf((int) (-0.0000028 * currentInt
-						* currentInt + 0.0405 * currentInt - 4));
+				realValue = Integer.valueOf((int) (-0.0000028 * currentDataPoint.getValue()
+						* currentDataPoint.getValue() + 0.0405 * currentDataPoint.getValue() - 4));
 
 			}
 			if (chosenSensor == 2) {
 				// Temperature
 				realValue = Integer
-						.valueOf((int) (-38.4 + (0.0098 * currentInt)));
+						.valueOf((int) (-38.4 + (0.0098 * currentDataPoint.getValue())));
 
 			}
 			if (chosenSensor == 3) {
 				// Light no conversion
-				realValue = Integer.valueOf((int) (currentInt));
+				realValue = Integer.valueOf((int) (currentDataPoint.getValue()));
 
 			}
-
-			realValueList.add(realValue);
+			DataPoint newDataPoint = new DataPoint();
+			newDataPoint.setValue(realValue);
+			newDataPoint.setVersionChanged(currentDataPoint.isVersionChanged());
+			realValueList.add(newDataPoint);
 		}
 		DrawGraph mainPanel = new DrawGraph(realValueList);
 
@@ -856,8 +912,10 @@ public class MCWindow {
 					if (checkBoxReqSensor.isSelected()){
 						reqSensors = 1;
 					}
-					
-					
+					if(chckbxEraseLog.isSelected())
+					{
+						reqSensors = 2;
+					}
 					// invoke sending of messages
 					sendMessage = new Thread(new SendMessages(mif, seqNumber,
 							ledNumber, receivers, reqSensors));

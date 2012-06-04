@@ -108,7 +108,7 @@ public class TableMsg extends net.tinyos.message.Message {
         s += "  [parent=0x"+Long.toHexString(get_parent())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
-        s += "  [avgRSSI=0x"+Long.toHexString(get_avgRSSI())+"]\n";
+        s += "  [avgLqi=0x"+Long.toHexString(get_avgLqi())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       return s;
     }
@@ -561,65 +561,65 @@ public class TableMsg extends net.tinyos.message.Message {
     }
 
     /////////////////////////////////////////////////////////
-    // Accessor methods for field: avgRSSI
+    // Accessor methods for field: avgLqi
     //   Field type: int, unsigned
     //   Offset (bits): 168
     //   Size (bits): 16
     /////////////////////////////////////////////////////////
 
     /**
-     * Return whether the field 'avgRSSI' is signed (false).
+     * Return whether the field 'avgLqi' is signed (false).
      */
-    public static boolean isSigned_avgRSSI() {
+    public static boolean isSigned_avgLqi() {
         return false;
     }
 
     /**
-     * Return whether the field 'avgRSSI' is an array (false).
+     * Return whether the field 'avgLqi' is an array (false).
      */
-    public static boolean isArray_avgRSSI() {
+    public static boolean isArray_avgLqi() {
         return false;
     }
 
     /**
-     * Return the offset (in bytes) of the field 'avgRSSI'
+     * Return the offset (in bytes) of the field 'avgLqi'
      */
-    public static int offset_avgRSSI() {
+    public static int offset_avgLqi() {
         return (168 / 8);
     }
 
     /**
-     * Return the offset (in bits) of the field 'avgRSSI'
+     * Return the offset (in bits) of the field 'avgLqi'
      */
-    public static int offsetBits_avgRSSI() {
+    public static int offsetBits_avgLqi() {
         return 168;
     }
 
     /**
-     * Return the value (as a int) of the field 'avgRSSI'
+     * Return the value (as a int) of the field 'avgLqi'
      */
-    public int get_avgRSSI() {
-        return (int)getUIntBEElement(offsetBits_avgRSSI(), 16);
+    public int get_avgLqi() {
+        return (int)getUIntBEElement(offsetBits_avgLqi(), 16);
     }
 
     /**
-     * Set the value of the field 'avgRSSI'
+     * Set the value of the field 'avgLqi'
      */
-    public void set_avgRSSI(int value) {
-        setUIntBEElement(offsetBits_avgRSSI(), 16, value);
+    public void set_avgLqi(int value) {
+        setUIntBEElement(offsetBits_avgLqi(), 16, value);
     }
 
     /**
-     * Return the size, in bytes, of the field 'avgRSSI'
+     * Return the size, in bytes, of the field 'avgLqi'
      */
-    public static int size_avgRSSI() {
+    public static int size_avgLqi() {
         return (16 / 8);
     }
 
     /**
-     * Return the size, in bits, of the field 'avgRSSI'
+     * Return the size, in bits, of the field 'avgLqi'
      */
-    public static int sizeBits_avgRSSI() {
+    public static int sizeBits_avgLqi() {
         return 16;
     }
 

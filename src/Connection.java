@@ -43,6 +43,15 @@ public class Connection implements MessageListener  {
 		Date date = new Date();
 		
 		int messageType = message.amType();
+		if(messageType == 100) // PrintfMsg
+		{
+		    PrintfMsg msg = (PrintfMsg)message;
+		    for(int i=0; i<PrintfMsg.totalSize_buffer(); i++) {
+		      char nextChar = (char)(msg.getElement_buffer(i));
+		      if(nextChar != 0)
+		        System.out.print(nextChar);
+		    }
+		}
 		if(messageType == 6 && (message.dataLength() == SerialMsg.DEFAULT_MESSAGE_SIZE)) // AM_COMMANDMSG
 		{
 			SerialMsg msg = (SerialMsg) message;
@@ -71,7 +80,7 @@ public class Connection implements MessageListener  {
 		{
 			
 			TableMsg tableMsg = (TableMsg) message;
-			System.out.println("Table of Node: "+tableMsg.get_sender() + "    chosenParent: "+ tableMsg.get_parent() + "    avgRSSI: "+ tableMsg.get_avgRSSI());
+			System.out.println("Table of Node: "+tableMsg.get_sender() + "    chosenParent: "+ tableMsg.get_parent() + "    avgLQI: "+ tableMsg.get_avgLqi());
 			MoteTable moteTable = new MoteTable(tableMsg.get_sender(), tableMsg.get_nodeId(), 
 					tableMsg.get_lastContact(),tableMsg.get_parent(), dateFormat.format(date));
 			
@@ -97,15 +106,24 @@ public class Connection implements MessageListener  {
 			// automatic update of view
 			MCWindow.fillTableView();
 		}
-		else if(messageType == 4 && (message.dataLength() == SensorMsg.DEFAULT_MESSAGE_SIZE)) //AM_sensor
+		else if(messageType == 4 && (message.dataLength() == SensorMsg.DEFAULT_MESSAGE_SIZE)) //AM_SENSORMSG
 		{
 			SensorMsg sensorMsg = (SensorMsg) message;
 			
+			
+			boolean versionChanged = false;
+			
+			System.out.println("lastSender: "+lastSender+" lastVersion: "+lastVersion);
+			System.out.println("msg.sender: "+sensorMsg.get_sender()+" msg.version: "+sensorMsg.get_version());
+			if( (lastSender == sensorMsg.get_sender()) && (lastVersion != sensorMsg.get_version())){
+				System.out.println("+++++++++++++++ Version set changed");
+				versionChanged = true;
+			}
 			lastSender = sensorMsg.get_sender();
 			lastVersion = sensorMsg.get_version();
 			
 			SensorData sensorData = new SensorData(sensorMsg.get_sender(), sensorMsg.get_sensor(),
-					sensorMsg.get_readings(), dateFormat.format(date));
+					sensorMsg.get_readings(), dateFormat.format(date), sensorMsg.get_version(), versionChanged);
 			
 			ArrayList<SensorData> sensorDataArray = SensorDataManager.getInstance().getSensorData();
 			
@@ -116,15 +134,7 @@ public class Connection implements MessageListener  {
 				sensorDataArray.clear();
 			}
 			
-			// show new version by adding dummy
-			/*int[] dummyData = new int[(sensorMsg.get_readings().length)];
-			for(int j = 0;j<dummyData.length;j++){
-				dummyData[j] = 0;
-			}
-			SensorData sensorDataDummy = new SensorData(sensorMsg.get_sender(), sensorMsg.get_sensor(),
-					dummyData , dateFormat.format(date));
-			sensorDataArray.add(sensorDataDummy);*/
-			
+						
 			
 			// automatic update of view
 			MCWindow.drawGraph();

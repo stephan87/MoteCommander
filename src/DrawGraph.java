@@ -18,7 +18,7 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class DrawGraph extends JPanel {
 	private static int MAX_VALUE = 0;
-	private static final int PANEL_WITDH = 500;
+	private static final int PANEL_WITDH = 700;
 	private static final int PANEL_HIGTH = 500;
 	private static final int BORDER_DISTANCE = 30;
 	private static final Color GRAPH_LINE_COLOR = Color.DARK_GRAY;
@@ -26,19 +26,19 @@ public class DrawGraph extends JPanel {
 	private static final Stroke GRAPH_LINE_SIZE = new BasicStroke(1f);
 	private static final int GRAPH_POINT_WIDTH = 2;
 	private static final int Y_AXES_MARK_COUNT = 10;
-	private List<Integer> dataPoints; // input
+	private List<DataPoint> dataPoints; // input
 	List<Point> graphPoints; // to plot
 	private Graphics2D graphicSpace;
 
-	public DrawGraph(List<Integer> dataPoints) {
+	public DrawGraph(List<DataPoint> dataPoints) {
 		this.dataPoints = dataPoints;
 		
 		// reset
 		MAX_VALUE = 0;
 		//search max
 		int current=0;
-		for(Iterator<Integer> iter = dataPoints.iterator();iter.hasNext();){
-			current = iter.next();
+		for(Iterator<DataPoint> iter = dataPoints.iterator();iter.hasNext();){
+			current = iter.next().getValue();
 			if(current> MAX_VALUE){
 				MAX_VALUE = current;
 			}
@@ -85,21 +85,24 @@ public class DrawGraph extends JPanel {
 		graphicSpace.drawLine(BORDER_DISTANCE, getHeight() - BORDER_DISTANCE,
 				getWidth() - BORDER_DISTANCE, getHeight() - BORDER_DISTANCE);
 
-		/*// create marks and labels for x axis.
-		for (int i = 0; i < dataPoints.size() + 1; i++) {
-			int x0 = (i + 1) * (getWidth() - BORDER_DISTANCE * 2)
-					/ (dataPoints.size() + 1) + BORDER_DISTANCE;
-			int x1 = x0;
-			int y0 = getHeight() - BORDER_DISTANCE - (GRAPH_POINT_WIDTH);
-			int y1 = y0 + 2 * GRAPH_POINT_WIDTH;
-			graphicSpace.drawLine(x0, y0, x1, y1);
-			
-			if(i < dataPoints.size()){
+		// create marks and labels for x axis.
+		Iterator<DataPoint> iter = dataPoints.iterator();
+		for (int i = 0; (i < dataPoints.size() + 1) && iter.hasNext(); i++) {
+			if(iter.next().isVersionChanged()){
+				System.out.println("############# Version Changed");
+				int x0 = (i + 1) * (getWidth() - BORDER_DISTANCE * 2)
+						/ (dataPoints.size() + 1) + BORDER_DISTANCE;
+				int x1 = x0;
+				int y0 = getHeight() - BORDER_DISTANCE - (GRAPH_POINT_WIDTH);
+				int y1 = y0 + 2 * GRAPH_POINT_WIDTH;
+				graphicSpace.drawLine(x0, y0, x1, y1);
+			}
+			/*if(i < dataPoints.size()){
 			graphicSpace.drawString("Data " + String.valueOf(i), x0 - 17,
 					y1 + 15);
-			}
+			}*/
 			
-		}*/
+		}
 			
 		
 			
@@ -147,7 +150,7 @@ public class DrawGraph extends JPanel {
 		graphPoints = new ArrayList<Point>();
 		for (int i = 0; i < dataPoints.size(); i++) {
 			int x1 = (int) ((i + 1) * xScale + BORDER_DISTANCE);
-			int y1 = (int) (getHeight() - (dataPoints.get(i) * yScale + BORDER_DISTANCE ) );
+			int y1 = (int) (getHeight() - (dataPoints.get(i).getValue() * yScale + BORDER_DISTANCE ) );
 			graphPoints.add(new Point(x1, y1));
 		}
 	}
