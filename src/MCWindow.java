@@ -239,7 +239,7 @@ public class MCWindow {
 		panelCon.add(lblIp, gbc_lblIp);
 
 		textFieldIP = new JTextField();
-		textFieldIP.setText("137.226.59.3"); // "137.226.59.149" //dantoine: 137.226.59.146
+		textFieldIP.setText("/dev/ttyUSB"); // "137.226.59.149" //dantoine: 137.226.59.146
 		GridBagConstraints gbc_textFieldIP = new GridBagConstraints();
 		gbc_textFieldIP.insets = new Insets(0, 0, 5, 0);
 		gbc_textFieldIP.fill = GridBagConstraints.BOTH;
@@ -257,7 +257,7 @@ public class MCWindow {
 		panelCon.add(labelPort, gbc_labelPort);
 
 		textFieldPort = new JTextField();
-		textFieldPort.setText("2004");
+		textFieldPort.setText("38400"); // 57600
 		GridBagConstraints gbc_textFieldPort = new GridBagConstraints();
 		gbc_textFieldPort.fill = GridBagConstraints.BOTH;
 		gbc_textFieldPort.insets = new Insets(0, 0, 5, 0);
@@ -940,40 +940,46 @@ public class MCWindow {
 	private void buttonConnectClicked() {
 		// parse IP and Port
 		String textFieldIPString = textFieldIP.getText();
-		String ip = textFieldIPString.trim();
-
+		String deviceBase = textFieldIPString.trim();
+		
 		String textFieldPortString = textFieldPort.getText();
 		String commandPort = textFieldPortString.trim();
 		
 		int startListenPort = Integer.valueOf(textFieldPortListenStart.getText());
 		int endListenPort = Integer.valueOf(textFieldPortListenEnd.getText());
 		
-		int[] listenPorts = new int[0];
-		int portCount = endListenPort - startListenPort;
+		int[] listenDevs = new int[0];
+		int portCount = maxReceivers;
+		int port = Integer.valueOf(textFieldPort.getText());
 		
-		if(portCount > 0){
-			listenPorts = new int[portCount];
+		if(portCount > 0)
+		{
+			listenDevs = new int[portCount];
 		
 			for (int i=0;i<portCount;i++) {
-				listenPorts[i] = startListenPort + i + 1;
+				listenDevs[i] = i;
 			}
 		}
 
-		if (mif == null) {
+		if (mif == null)
+		{
 			// create connection
 			connection = new Connection();
-			mif = connection.connect(listenPorts,commandPort, ip);
+			mif = connection.connect(deviceBase, listenDevs,port);
 			
 			// Successful?
-			if (mif != null) {
+			if (mif != null) 
+			{
 				buttonConnect.setText("Disconnect!");
-				textAreaOutput.setText(textAreaOutput.getText()
-						+ "Successfully connected!\n");
-			} else {
-				textAreaOutput.setText(textAreaOutput.getText()
-						+ "Can't connect to sf@" + ip + ":" + commandPort + "!\n");
+				textAreaOutput.setText(textAreaOutput.getText()	+ "Successfully connected!\n");
 			}
-		} else {
+			else 
+			{
+				textAreaOutput.setText(textAreaOutput.getText()	+ "Can't connect to serial@" + deviceBase + "!\n");
+			}
+		}
+		else
+		{
 			// Disconnect!
 			mif = null;
 			buttonConnect.setText("Connect!");

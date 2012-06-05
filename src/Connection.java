@@ -36,7 +36,7 @@ public class Connection implements MessageListener  {
 	 */
 	@SuppressWarnings("deprecation")
 	public  void messageReceived(int to, Message message) {
-		//System.out.println("Message received - type: "+message.amType());
+		System.out.println("Message received - type: "+message.amType());
 		
 		// get local time
 		DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -46,11 +46,13 @@ public class Connection implements MessageListener  {
 		if(messageType == 100) // PrintfMsg
 		{
 		    PrintfMsg msg = (PrintfMsg)message;
+		    System.out.println("printf: ");
 		    for(int i=0; i<PrintfMsg.totalSize_buffer(); i++) {
 		      char nextChar = (char)(msg.getElement_buffer(i));
 		      if(nextChar != 0)
 		        System.out.print(nextChar);
 		    }
+		    System.out.println();
 		}
 		if(messageType == 6 && (message.dataLength() == SerialMsg.DEFAULT_MESSAGE_SIZE)) // AM_COMMANDMSG
 		{
@@ -146,12 +148,12 @@ public class Connection implements MessageListener  {
 	/*
 	 * Establishes a connection to a given ip and registers message listeners.
 	 */
-	public MoteIF connect(int[] listenPorts, String commandPort, String ip) {
+	public MoteIF connect(String deviceBase, int[] nums, int port) {
 
-		for (int port : listenPorts) {
+		for (int deviceNum : nums) {
 			
 			PhoenixSource phoenix;
-			String source = "sf@" + ip + ":" + String.valueOf(port);
+			String source = "serial@" + deviceBase + String.valueOf(deviceNum+1) +":"+ String.valueOf(port);
 			MyPhoenixError errorHandler = new MyPhoenixError();
 	
 			try {
@@ -159,39 +161,20 @@ public class Connection implements MessageListener  {
 				phoenix = BuildSource.makePhoenix(source, PrintStreamMessenger.err);
 				errorHandler.setSource(phoenix);
 				phoenix.setPacketErrorHandler(errorHandler);
+				if(deviceNum == 0)
+				{
+					this.moteIF = new MoteIF(phoenix);
+					this.moteIF.registerListener(new TestSerialMsg(), this);
+					this.moteIF.registerListener(new PrintfMsg(),this);
+					System.out.println("successfully created MoteIF on Mote 0");
+				}
 			} catch (Exception e)
 			{
-				System.out.println("Fatal Error: exiting");
+				System.out.println("Fatal Error: "+e.getMessage());
 				return null;
 			}
 		}
-		
-		// build the real command interface source
-		
-		PhoenixSource commandPhoenix;
-		
-		MoteIF commandMif = null;
-		String source = "sf@" + ip + ":" + commandPort;
-		MyPhoenixError errorHandler = new MyPhoenixError();
-
-		System.out.println("Create Command Interface: "+source);
-		try {
-			commandPhoenix = BuildSource.makePhoenix(source, PrintStreamMessenger.err);
-			errorHandler.setSource(commandPhoenix);
-			commandPhoenix.setPacketErrorHandler(errorHandler);
-			commandMif = new MoteIF(commandPhoenix);
-		} catch (Exception e)
-		{
-			System.out.println("Fatal Error: exiting");
-			return null;
-		}
-		
-		this.moteIF = commandMif;
-		this.moteIF.registerListener(new SerialMsg(), this);
-		this.moteIF.registerListener(new TableMsg(),this);
-		this.moteIF.registerListener(new SensorMsg(),this);
-		System.out.println("successfully created connections");
-		return commandMif;
+		return this.moteIF;
 	}
 
 	

@@ -3,5 +3,22 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="/home/sensornet6/local/src/tinyos-2.x/support/sdk/java/tinyos.jar" sourcepath="/home/sensornet6/local/src/tinyos-2.x/support/sdk/java/"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/collections-generic-4.01.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/colt-1.2.0.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/concurrent-1.3.4.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/j3d-core-1.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/jung-3d-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/jung-3d-demos-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/jung-algorithms-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/jung-api-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/jung-graph-impl-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/jung-io-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/jung-jai-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/jung-jai-samples-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/jung-samples-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/jung-visualization-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/vecmath-1.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/sensornet6/git_christian/MoteCommander/jung/wstx-asl-3.2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
