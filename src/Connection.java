@@ -4,7 +4,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import net.tinyos.message.Message;
 import net.tinyos.message.MessageListener;
@@ -24,7 +26,8 @@ import net.tinyos.util.PrintStreamMessenger;
 public class Connection implements MessageListener  {
 
 	private MoteIF moteIF;
-	public static SerialMsg payload = null;
+	private Set<MoteIF> listeningMifs;
+	public static TestSerialMsg payload = null;
 	public static boolean resume = false;
 	private PhoenixSource phoenixSource;
 	private int lastVersion = 0;
@@ -46,28 +49,22 @@ public class Connection implements MessageListener  {
 		if(messageType == 100) // PrintfMsg
 		{
 		    PrintfMsg msg = (PrintfMsg)message;
-		    System.out.println("printf: ");
 		    for(int i=0; i<PrintfMsg.totalSize_buffer(); i++) {
 		      char nextChar = (char)(msg.getElement_buffer(i));
 		      if(nextChar != 0)
 		        System.out.print(nextChar);
 		    }
-		    System.out.println();
 		}
-		if(messageType == 6 && (message.dataLength() == SerialMsg.DEFAULT_MESSAGE_SIZE)) // AM_COMMANDMSG
+		if(messageType == 6 && (message.dataLength() == TestSerialMsg.DEFAULT_MESSAGE_SIZE)) // AM_TESTSERIALMSG
 		{
-			SerialMsg msg = (SerialMsg) message;
-			System.out.println("Received packet from: " + msg.get_sender() + " to="
-					+ to);
+			TestSerialMsg msg = (TestSerialMsg) message;
+			System.out.println("Received packet from: " + msg.get_sender() + " to="+ to);
 			System.out.println("seqNum: " + msg.get_seqNum());
 			System.out.println("ledNum: " + msg.get_ledNum());
 			System.out.println("receiver: " + msg.get_receiver());
 		
 			
-			if((payload!= null)
-					&& (msg.get_sender() == 0)
-					&& (msg.get_seqNum() == payload.get_seqNum())
-					)
+			if((payload!= null) && (msg.get_sender() == 0) && (msg.get_seqNum() == payload.get_seqNum()))
 			{
 				MCWindow.textAreaOutput.setText("Message successfully forwarded to mote \"0\"!\n"+ MCWindow.textAreaOutput.getText());
 				try{
@@ -150,10 +147,11 @@ public class Connection implements MessageListener  {
 	 */
 	public MoteIF connect(String deviceBase, int[] nums, int port) {
 
+		listeningMifs = new HashSet<MoteIF>();
 		for (int deviceNum : nums) {
 			
 			PhoenixSource phoenix;
-			String source = "serial@" + deviceBase + String.valueOf(deviceNum+1) +":"+ String.valueOf(port);
+			String source = "serial@" + deviceBase + String.valueOf(deviceNum) +":"+ String.valueOf(port);
 			MyPhoenixError errorHandler = new MyPhoenixError();
 	
 			try {
@@ -168,6 +166,12 @@ public class Connection implements MessageListener  {
 					this.moteIF.registerListener(new PrintfMsg(),this);
 					System.out.println("successfully created MoteIF on Mote 0");
 				}
+				else
+				{
+					MoteIF mif = new MoteIF(phoenix);
+					mif.registerListener(new PrintfMsg(),this);
+					listeningMifs.add(mif);
+				}
 			} catch (Exception e)
 			{
 				System.out.println("Fatal Error: "+e.getMessage());
@@ -175,6 +179,10 @@ public class Connection implements MessageListener  {
 			}
 		}
 		return this.moteIF;
+	}
+
+	public Set<MoteIF> getListeners() {
+		return this.listeningMifs;
 	}
 
 	

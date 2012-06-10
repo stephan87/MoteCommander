@@ -31,7 +31,7 @@ public class SendMessages implements Runnable {
 		
 		for(int i = 0; i < receivers.length; i++){
 			
-			SerialMsg payload = new SerialMsg();
+			TestSerialMsg payload = new TestSerialMsg();
 			
 			
 			while(Connection.resume == false){ // retransmit if not waked up -> timeout
@@ -40,7 +40,7 @@ public class SendMessages implements Runnable {
 					payload.set_sender(99);
 					payload.set_seqNum(seqnumber++);
 					payload.set_ledNum(ledNumber);
-					payload.set_reqSensor(reqSensors);
+					
 					MCWindow.textAreaOutput.setText("Forward message to mote \"0\" with receiver "
 					+ receivers[i] +"!\n"+ MCWindow.textAreaOutput.getText());
 					moteIF.send(0, payload);
@@ -54,7 +54,7 @@ public class SendMessages implements Runnable {
 					System.out.println("supsend");
 					
 					// sleep until ack received
-					MCWindow.sendMessage.sleep(500);
+					MCWindow.sendMessage.sleep(1000);
 					if(Connection.resume == false){
 						MCWindow.textAreaOutput.setText("Retransmitting message!\n" + MCWindow.textAreaOutput.getText());
 					}

@@ -26,6 +26,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
 import net.tinyos.message.MoteIF;
+import net.tinyos.packet.PhoenixSource;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -47,6 +48,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
 import javax.swing.JTextPane;
 import org.apache.commons.collections15.Transformer;
 
@@ -257,7 +260,7 @@ public class MCWindow {
 		panelCon.add(labelPort, gbc_labelPort);
 
 		textFieldPort = new JTextField();
-		textFieldPort.setText("38400"); // 57600
+		textFieldPort.setText("57600"); // 57600
 		GridBagConstraints gbc_textFieldPort = new GridBagConstraints();
 		gbc_textFieldPort.fill = GridBagConstraints.BOTH;
 		gbc_textFieldPort.insets = new Insets(0, 0, 5, 0);
@@ -981,10 +984,15 @@ public class MCWindow {
 		else
 		{
 			// Disconnect!
+			PhoenixSource source = mif.getSource();
+			source.shutdown();
+			Set<MoteIF> listeners = connection.getListeners();
+			for (MoteIF moteIF : listeners) {
+				moteIF.getSource().shutdown();
+			}
 			mif = null;
 			buttonConnect.setText("Connect!");
-			textAreaOutput.setText(textAreaOutput.getText()
-					+ "Successfully disconnected!\n");
+			textAreaOutput.setText(textAreaOutput.getText()+ "Successfully disconnected!\n");
 		}
 	}
 
